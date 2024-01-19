@@ -1,0 +1,413 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HalfLife.UnifiedSdk.MapUpgrader.Upgrades</name>
+    </assembly>
+    <members>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.BaCanal1FixAlienSlaveSpawnsUpgrade">
+            <summary>
+            Removes the <c>netname</c> keyvalue from the <c>monstermaker</c>s that spawn in Alien Slaves
+            to prevent them from waiting for 5 seconds.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.BaOutroDisableTriggerAutoUpgrade">
+            <summary>
+            Sets the <c>Remove On Fire</c> spawnflag on the <c>trigger_auto</c> entity
+            used to start the script on <c>ba_outro</c>.
+            This fixes the script restarting on save load.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.BaOutroFixGruntsBodyUpgrade">
+            <summary>
+            Adjusts the body values of the Human Grunts in <c>ba_outro</c> to match the Half-Life script
+            and to avoid clipping weapons into Freeman.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.BaPower2RemoveChapterTitleUpgrade">
+            <summary>
+            Removes the <c>chaptertitle</c> key from <c>worldspawn</c> in <c>ba_power2</c> to remove the redundant chapter title text.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.BaSecurity2ChangeHologramModelUpgrade">
+            <summary>
+            Changes Gina model in <c>ba_security2</c> to allow playing push cart sequence.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.BaTram1FixScientistHeadUpgrade">
+            <summary>
+            Removes the <c>body</c> keyvalue from the <c>monster_generic</c> newspaper scientist in <c>ba_tram1</c>.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.BaTram1FixSuitUpgrade">
+            <summary>
+            Removes the HEV suit from <c>ba_tram1</c> (now given by map config).
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.BaTram2FixScientistSkinColorUpgrade">
+            <summary>
+            Fixes the Luther scientist in <c>ba_tram2</c>'s reflective lab room having white hands.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.BaYard1FixDeadScientistModelUpgrade">
+            <summary>
+            Changes incorrect dead scientist head (Rosenberg) in <c>ba_yard1</c> to use the same as in <c>ba_yard4</c> (Glasses).
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.BaYard4aSlavesUpgrade">
+            <summary>
+            Fixes the Alien Slaves in <c>ba_yard4a</c> being resurrected by triggering them
+            instead of the <c>scripted_sequence</c> keeping them in stasis.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.ChangeBlueShiftSentencesUpgrade">
+            <summary>
+            Updates references to specific sentences to use the correct vanilla Half-Life sentence.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.RemapRosenbergNoUseFlagUpgrade">
+            <summary>
+            Remaps <c>monster_rosenberg</c>'s <c>No use</c> flag to <c>monster_scientist</c>'s <c>Allow follow</c> keyvalue.
+            Technically this flag is the <c>Pre-Disaster</c> flag used by <c>monster_scientist</c>
+            but it is treated as a separate flag to distinguish the behavior.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.BlueShift.RenameConsoleCivAnimationsUpgrade">
+            <summary>
+            Renames certain animations referenced by <c>scripted_sequence</c>s targeting entities using <c>models/console_civ_scientist.mdl</c>.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.AdjustMaxRangeUpgrade">
+            <summary>
+            Adjusts the <c>MaxRange</c> keyvalue for specific maps to fix graphical issues
+            when geometry is further away than the original value.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.AdjustShotgunAnglesUpgrade">
+            <summary>
+            Opposing Force and Blue Shift's shotgun world model has a different alignment.
+            Since we're using the vanilla Half-Life model the angles need adjusting.
+            This adjusts the angles to match the original model.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.ChangeBell1SoundAndPitch">
+            <summary>
+            Find all buttons/bell1.wav sounds that have a pitch set to 80.
+            Change those to use an alternative sound and set their pitch to 100.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.ConvertAngleToAnglesUpgrade">
+            <summary>
+            Converts the obsolete <c>angle</c> keyvalue to <c>angles</c>.
+            This is normally done by the engine, but to avoid having to account for both keyvalues in other upgrades this is done here.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.ConvertBarneyModelUpgrade">
+            <summary>
+            Converts <c>monster_barney_dead</c> entities with custom body value to use the new <c>bodystate</c> keyvalue.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.ConvertBreakableItemUpgrade">
+            <summary>
+            Converts <c>func_breakable</c>'s spawn object keyvalue from an index to a classname.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.ConvertOtisModelUpgrade">
+            <summary>
+            Converts the <c>monster_otis</c> model and body value to the appropriate keyvalues.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.ConvertSoundIndicesToNamesUpgrade">
+            <summary>
+            Converts all entities that use sounds or sentences by index to use sound filenames or sentence names instead.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.ConvertWorldItemsToItemUpgrade">
+            <summary>
+            Converts <c>world_items</c> entities to their equivalent entity.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.ConvertWorldspawnGameTitleValueUpgrade">
+            <summary>
+            Converts the <c>gametitle</c> keyvalue to a string containing the game name.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.FixNonLoopingSoundsUpgrade">
+            <summary>
+            Fixes <c>ambient_generic</c> entities using non-looping sounds
+            to stop them from restarting when loading a save game.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.FixRenderColorFormatUpgrade">
+            <summary>
+            Fixes the use of invalid render color formats in some maps.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.PruneExcessMultiManagerKeysUpgrade">
+            <summary>
+            Prunes excess keyvalues specified for <c>multi_manager</c> entities.
+            In practice this only affects a handful of entities used in retinal scanner scripts.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.PruneExcessMultiManagerKeysUpgrade.MaxKeys">
+            <summary>
+            Original HL1 SDK limit.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.PruneExcessMultiManagerKeysUpgrade.KeysToIgnore">
+            <summary>
+            These keys are not counted as targets by <c>multi_manager</c>.
+            There are more of these but normally they aren't used.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.RemoveDMDelayFromChargersUpgrade">
+            <summary>
+            Removes the <c>dmdelay</c> keyvalue from charger entities. The original game ignores these.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.RenameEntityClassNamesUpgrade">
+            <summary>
+            Renames weapon and item classnames to their primary name.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.RenameMessagesUpgrade">
+            <summary>
+            Renames the messages used in <c>env_message</c> entities and <c>worldspawn</c> to use a game-specific prefix.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.ReworkGamePlayerEquipUpgrade">
+            <summary>
+            Changes all unnamed <c>game_player_equip</c> entities to be fired on player spawn.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.ReworkMusicPlaybackUpgrade">
+            <summary>
+            Reworks how music is played to use <c>ambient_music</c> instead.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.Common.SetCustomHullForGenericMonstersUpgrade">
+            <summary>
+            Sets a custom hull size for <c>monster_generic</c> entities that use a model that was originally hard-coded to use one.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.DiagnosticsLevel">
+            <summary>
+            Log output diagnostics levels.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.DiagnosticsLevel.Disabled">
+            <summary>
+            No diagnostics output.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.DiagnosticsLevel.Common">
+            <summary>
+            All diagnostics output, excluding verbose output.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.DiagnosticsLevel.All">
+            <summary>
+            All diagnostics output.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.GameConstants">
+            <summary>
+            Constants used by the game.
+            TODO: should probably be in a separate assembly.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.GameConstants.HullMin">
+            <summary>
+            Player hull minimum bounds.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.GameConstants.HullMax">
+            <summary>
+            Player hull maximum bounds.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.HalfLife.C2a5FixBarrelPushTriggersUpgrade">
+            <summary>
+            Fixes the barrels in <c>c2a5</c> not flying as high as they're supposed to on modern systems due to high framerates.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.HalfLife.C2a5FixCrateGlobalNameUpgrade">
+            <summary>
+            Removes the <c>globalname</c> keyvalue from the <c>func_breakable</c> crates next to the dam in <c>c2a5</c>.
+            The globalname is left over from copy pasting the entity from the crates in the tunnel earlier in the map
+            and causes these crates to disappear.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.HalfLife.C3a2bFixWaterValvesUpgrade">
+            <summary>
+            Prevents players from soft-locking the game by turning both valves at the same time in
+            <c>c3a2b</c> (Lambda Core reactor water flow).
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.HalfLife.C3a2FixLoadSavedUpgrade">
+            <summary>
+            Increases the reload delay after killing the scientist in <c>c3a2</c>
+            to allow the entire game over message to display.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.HalfLife.C4a2FixNihilanthDialogueUpgrade">
+            <summary>
+            Fixes Nihilanth's dialogue not playing at the start of <c>c4a2</c> (Gonarch's Lair).
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.HalfLife.C4a3FixFlareSpritesUpgrade">
+            <summary>
+            Fixes the flare sprites shown during Nihilanth's death script using the wrong render mode.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.MapUpgradeBuilderExtensions">
+            <summary>
+            Extensions for building a map upgrade collection.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.MapUpgradeBuilderExtensions.AddSharedUpgrades(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollectionBuilder)">
+            <summary>
+            Adds shared upgrades.
+            </summary>
+            <param name="builder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.MapUpgradeBuilderExtensions.AddHalfLifeUpgrades(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollectionBuilder)">
+            <summary>
+            Adds upgrades for Half-Life.
+            </summary>
+            <param name="builder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.MapUpgradeBuilderExtensions.AddOpposingForceUpgrades(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollectionBuilder)">
+            <summary>
+            Adds upgrades for Opposing Force.
+            </summary>
+            <param name="builder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.MapUpgradeBuilderExtensions.AddBlueShiftUpgrades(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollectionBuilder)">
+            <summary>
+            Adds upgrades for Blue Shift.
+            </summary>
+            <param name="builder"></param>
+            <returns></returns>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.MapUpgradeToolFactory">
+            <summary>
+            Factory for creating an upgrade tool.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.MapUpgradeToolFactory.Create(Serilog.ILogger,HalfLife.UnifiedSdk.MapUpgrader.Upgrades.DiagnosticsLevel)">
+            <summary>
+            Creates an upgrade tool that applies the upgrades needed to upgrade a map to the latest version of the Unified SDK.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.AdjustBlackOpsSkinUpgrade">
+            <summary>
+            Adjust <c>monster_male_assassin</c> NPCs to use the correct head and skin value.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.ChangeFuncTankOfToFuncTankUpgrade">
+            <summary>
+            Renames the Opposing Force <c>func_tank</c> classes to their original versions.
+            No other changes are needed, as the original versions have been updated to include the new functionality.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.ConvertOtisBodyStateUpgrade">
+            <summary>
+            Converts <c>monster_otis</c> <c>bodystate</c> keyvalues to no longer include the <c>Random</c> value,
+            which is equivalent to <c>Holstered</c>.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.ConvertScientistItemUpgrade">
+            <summary>
+            Converts the Opposing Force scientist <c>clipboard</c> and <c>stick</c> heads to use the <c>item</c> body group instead.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.ConvertSuitToPCVUpgrade">
+            <summary>
+            Converts <c>item_suit</c>'s model to use <c>w_pcv.mdl</c> in Opposing Force maps.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.DisableFuncTankOfPersistenceUpgrade">
+            <summary>
+            Disables the <c>persistence</c> behavior for all Opposing Force tank entities to match the original's behavior.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.FixBlackOpsSpawnDelayUpgrade">
+            <summary>
+            Sets the <c>assassin4_spawn</c> <c>monstermaker</c> in <c>of6a1</c> to spawn a Black Ops assassin immediately
+            to make the switch from prisoner less obvious.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.MonsterTentacleSpawnFlagUpgrade">
+            <summary>
+            Converts the Opposing Force <c>monster_tentacle</c> "Use Lower Model" spawnflag to instead set a custom model on the entity,
+            and changes other uses to use the alternate model.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.Of0a0DisableItemDroppingUpgrade">
+            <summary>
+            Disables item dropping for a couple NPCs in the Opposing Force intro map so players can't get weapons from them if they die.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.Of1a1FixStretcherGunUpgrade">
+            <summary>
+            Updates the stretcher grunt's body value to make the grunt's weapon invisible.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.Of1a4bChangeLoaderSkinUpgrade">
+            <summary>
+            Changes the loader entity's skin in <c>of1a4b</c> to use the correct crate texture.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.Of2a2FixGruntBodyUpgrade">
+            <summary>
+            Fixes <c>monster_generic</c> entities that use <c>hgrunt_opfor.mdl</c> to use the correct body value.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.Of4a4BridgeUpgrade">
+            <summary>
+            Fixes the Pit Worm's Nest bridge possibly breaking if triggered too soon.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.Of5a2FixXenBullsquidScriptsUpgrade">
+            <summary>
+            Fixes the Bullsquids in <c>of5a2</c> having the wrong targetnames causing the eating scripts to fail.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.Of6a5FixGenewormArriveSoundUpgrade">
+            <summary>
+            Adds a missing <c>.wav</c> extension to the sound played when the Geneworm enters in <c>of6a5</c>.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.OfBoot1FixOspreyScriptUpgrade">
+            <summary>
+            Prevents the Osprey in <c>ofboot1</c> from switching to the <c>rotor</c> animation
+            and falling through the ground after loading a save game.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.RemoveGameModeSettingsUpgrade">
+            <summary>
+            Removes the CTF game mode settings from Opposing Force maps.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.RenameBlackOpsAnimationsUpgrade">
+            <summary>
+            Renames certain animations referenced by <c>scripted_sequence</c>s targeting <c>monster_male_assassin</c>
+            or entities using its model to use the new animation names.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.RenameIntroGruntAnimationsUpgrade">
+            <summary>
+            Renames the intro grunt animations.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.MapUpgrader.Upgrades.OpposingForce.RenameOtisAnimationsUpgrade">
+            <summary>
+            Renames certain animations referenced by <c>scripted_sequence</c>s targeting <c>monster_otis</c>
+            or entities using its model to use the new animation names.
+            </summary>
+        </member>
+    </members>
+</doc>

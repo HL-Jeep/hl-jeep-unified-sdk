@@ -1,0 +1,1812 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HalfLife.UnifiedSdk.Utilities</name>
+    </assembly>
+    <members>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Configuration.PathConverter">
+            <summary>
+            Converts paths to and from platform-specific form.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Configuration.PathConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.String,Newtonsoft.Json.JsonSerializer)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Configuration.PathConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.String,System.Boolean,Newtonsoft.Json.JsonSerializer)">
+            <inheritdoc/>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Entities.Entity">
+            <summary>
+            Encapsulates an entity and provides all of its keyvalues as two sets of lists: a read-only original and a mutable current set.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.Entity.OriginalKeyValues">
+            <summary>The keyvalues that the entity had stored in the map.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.Entity.Count">
+            <summary>Number of keyvalues in this entity, including the class name.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.Entity.IsReadOnly">
+            <inheritdoc/>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.Entity.Item(System.String)">
+            <summary>Gets or sets the keyvalue with the given <paramref name="key"/>.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.Entity.Item(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.Entity.ClassName">
+            <summary>The entity's class name.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.Entity.IsWorldspawn">
+            <summary>Whether this entity is the worldspawn entity.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.#ctor(HalfLife.UnifiedSdk.Utilities.Entities.EntityList,System.Collections.Immutable.ImmutableList{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Creates a new entity with the given keyvalues that is part of the given entity list.
+            </summary>
+            <exception cref="T:System.ArgumentException">If the classname is missing or contains only whitespace.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.ContainsKey(System.String)">
+            <summary>Returns whether any keyvalue contains <paramref name="key"/>.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.ContainsValue(System.String)">
+            <summary>Returns whether any keyvalue contains <paramref name="value"/>.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.TryGetValue(System.String,System.String@)">
+            <summary>Gets the first occurrence of <paramref name="key"/>.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.GetStringOrNull(System.String)">
+            <summary>Gets the value of the given <paramref name="key"/> if it exists, <see langword="null"/> otherwise.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.GetString(System.String,System.String)">
+            <summary>Gets the value of the given <paramref name="key"/> if its exists, <paramref name="defaultValue"/> otherwise.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.SetString(System.String,System.String)">
+            <summary>Sets <paramref name="key"/> to <paramref name="value"/>.</summary>
+            <param name="key">Key to add or set. Must contain at least one non-whitespace character.</param>
+            <param name="value">Value to set.</param>
+            <remarks>
+            If this entity is <c>worldspawn</c> then <paramref name="key"/> may not be <c>classname</c>.
+            If <paramref name="key"/> is <c>classname</c>
+            and this entity not is <c>worldspawn</c> then <paramref name="value"/> may not be <c>worldspawn</c>.
+            </remarks>
+            <exception cref="T:System.ArgumentNullException"><paramref name="key"/> or <paramref name="value"/> are <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="key"/> is invalid.
+            -or- <paramref name="key"/> is <c>classname</c> and <paramref name="value"/> is not a valid classname,
+            the current entity is <c>worldspawn</c>
+            or the current entity is not <c>worldspawn</c> and <paramref name="value"/> is <c>worldspawn</c>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.Remove(System.String)">
+            <summary>Removes all occurrences of <paramref name="key"/> from the entity.</summary>
+            <exception cref="T:System.ArgumentException"><paramref name="key"/> is <c>classname</c></exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.Clear">
+            <summary>Removes all keyvalues except for the class name.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.GetEnumerator">
+            <summary>Returns an enumerator that iterates through the <see cref="T:HalfLife.UnifiedSdk.Utilities.Entities.Entity"/>.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.Add(System.String,System.String)">
+            <inheritdoc cref="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.SetString(System.String,System.String)"/>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.SetString(System.String,System.String)"/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.IndexOf(System.Collections.Generic.KeyValuePair{System.String,System.String})">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.IndexOf(System.String)">
+            <inheritdoc cref="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.IndexOf(System.Collections.Generic.KeyValuePair{System.String,System.String})"/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.Insert(System.Int32,System.Collections.Generic.KeyValuePair{System.String,System.String})">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.RemoveAt(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.SetKeyValue(System.Int32,System.String,System.String,System.Boolean)">
+            <summary>Sets the keyvalue in the underlying entity object.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.RemoveKeyValue(System.Int32,System.String)">
+            <summary>Removes the keyvalue from the underlying entity object.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.Entity.RemoveAllKeyValues">
+            <summary>Removes all keyvalues except for the classname.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Entities.EntityEventArgs">
+            <summary>Event arguments type for anything involving entities.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.EntityEventArgs.Entity">
+            <summary>The entity involved in this event.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityEventArgs.#ctor(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Creates a new instance of this event object.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions">
+            <summary>Extensions for <see cref="T:HalfLife.UnifiedSdk.Utilities.Entities.Entity"/>.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetInteger(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Int32)">
+            <summary>
+            Gets <paramref name="key"/> as an <see cref="T:System.Int32"/> if it exists and if it could be parsed, <paramref name="defaultValue"/> otherwise.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetDouble(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Double)">
+            <summary>
+            Gets <paramref name="key"/> as a <see cref="T:System.Double"/> if it exists and if it could be parsed, <paramref name="defaultValue"/> otherwise.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetBool(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Boolean)">
+            <summary>
+            Gets <paramref name="key"/> as a <see cref="T:System.Boolean"/> if it exists and if it could be parsed, <paramref name="defaultValue"/> otherwise.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetVector2(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Numerics.Vector2)">
+            <summary>
+            Gets <paramref name="key"/> as a <see cref="T:System.Numerics.Vector2"/> if it exists and if it could be parsed, <paramref name="defaultValue"/> otherwise.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetVector3(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Numerics.Vector3)">
+            <summary>
+            Gets <paramref name="key"/> as a <see cref="T:System.Numerics.Vector3"/> if it exists and if it could be parsed, <paramref name="defaultValue"/> otherwise.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetVector4(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Numerics.Vector4)">
+            <summary>
+            Gets <paramref name="key"/> as a <see cref="T:System.Numerics.Vector4"/> if it exists and if it could be parsed, <paramref name="defaultValue"/> otherwise.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetInteger(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Int32)">
+            <summary>Sets <paramref name="key"/> to <paramref name="value"/></summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetDouble(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Double)">
+            <summary>Sets <paramref name="key"/> to <paramref name="value"/></summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetBool(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Int32)">
+            <summary>Sets <paramref name="key"/> to <paramref name="value"/></summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetVector2(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Numerics.Vector2)">
+            <summary>Sets <paramref name="key"/> to <paramref name="value"/></summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetVector3(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Numerics.Vector3)">
+            <summary>Sets <paramref name="key"/> to <paramref name="value"/></summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetVector4(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Numerics.Vector4)">
+            <summary>Sets <paramref name="key"/> to <paramref name="value"/></summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetSpawnFlags(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Gets the <c>spawnflags</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetModel(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Gets the <c>model</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetTargetName(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Gets the <c>targetname</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetTarget(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Gets the <c>target</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetGlobalName(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Gets the <c>globalname</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetDelay(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Gets the <c>delay</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetOrigin(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Gets the <c>origin</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetAngles(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Gets the <c>angles</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetRenderMode(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Gets the <c>rendermode</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetRenderAmount(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Gets the <c>renderamt</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.GetRenderColor(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Gets the <c>rendercolor</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetSpawnFlags(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.Int32)">
+            <summary>Sets the <c>spawnflags</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetModel(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String)">
+            <summary>Sets the <c>model</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetTargetName(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String)">
+            <summary>Sets the <c>targetname</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetTarget(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String)">
+            <summary>Sets the <c>target</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetGlobalName(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String)">
+            <summary>Sets the <c>globalname</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetDelay(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.Double)">
+            <summary>Sets the <c>delay</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetOrigin(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.Numerics.Vector3)">
+            <summary>Sets the <c>origin</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetAngles(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.Numerics.Vector3)">
+            <summary>Sets the <c>angles</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetRenderMode(HalfLife.UnifiedSdk.Utilities.Entities.Entity,HalfLife.UnifiedSdk.Utilities.Entities.RenderMode)">
+            <summary>Sets the <c>rendermode</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetRenderAmount(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.Double)">
+            <summary>Sets the <c>renderamount</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.SetRenderColor(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.Numerics.Vector3)">
+            <summary>Sets the <c>rendercolor</c> value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.WithoutClassName(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Returns an enumerable without any <c>classname</c> keyvalues.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.ReplaceKeyValues(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Replaces all keyvalues in <paramref name="entity"/> with those in <paramref name="keyValues"/>.
+            The class name is not changed.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.ReplaceWith(HalfLife.UnifiedSdk.Utilities.Entities.Entity,HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>
+            Replaces all keyvalues in <paramref name="entity"/>> with those in <paramref name="other"/>.
+            The class name is updated if it differs (unless <paramref name="entity"/> is worldspawn).
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityExtensions.HasKeyValue(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.String)">
+            <summary>
+            Returns whether the entity has the key <paramref name="key"/> with value <paramref name="value"/>.
+            </summary>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="entity"/>, <paramref name="key"/> or <paramref name="value"/> are <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Entities.EntityKeyValueChangedEventArgs">
+            <summary>
+            Event arguments type for entity keyvalue changed event.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.EntityKeyValueChangedEventArgs.Key">
+            <summary>Key of the keyvalue that was changed.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.EntityKeyValueChangedEventArgs.PreviousValue">
+            <summary>Previous value.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.EntityKeyValueChangedEventArgs.CurrentValue">
+            <summary>Current value.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityKeyValueChangedEventArgs.#ctor(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.String,System.String)">
+            <summary>Creates a new instance of this event object.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Entities.EntityKeyValueRemovingEventArgs">
+            <summary>
+            Event arguments type for entity keyvalue removed event.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.EntityKeyValueRemovingEventArgs.Key">
+            <summary>Key of the keyvalue that was removed.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityKeyValueRemovingEventArgs.#ctor(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String)">
+            <summary>Creates a new instance of this event object.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Entities.EntityList">
+            <summary>
+            Manages the list of entities.
+            Implements most of the <see cref="T:System.Collections.Generic.IList`1"/> interface, but not all of it due to limitations of the underlying data structures.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Entities.EntityList._entities">
+            <summary>All entities currently in the map.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.Count">
+            <summary>Total number of entities in the list, including <c>worldspawn</c>.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.Item(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.IsReadOnly">
+            <inheritdoc/>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.Worldspawn">
+            <summary>Gets the worldspawn entity.</summary>
+        </member>
+        <member name="E:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.EntityCreated">
+            <summary>Raised when an entity is created.</summary>
+        </member>
+        <member name="E:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.RemovingEntity">
+            <summary>Raised when an entity is about to be removed.</summary>
+        </member>
+        <member name="E:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.KeyValueChanged">
+            <summary>Raised when a keyvalue is changed in the given entity.</summary>
+        </member>
+        <member name="E:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.RemovingKeyValue">
+            <summary>Raised when a keyvalue is about to be removed from the given entity.</summary>
+        </member>
+        <member name="E:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.RemovingAllKeyValues">
+            <summary>Raised when all keyvalues are about to be removed from the given entity.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.IndexOf(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <inheritdoc/>
+            <exception cref="T:System.ArgumentNullException"><paramref name="entity"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.Contains(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <inheritdoc/>
+            <exception cref="T:System.ArgumentNullException"><paramref name="entity"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.CreateNewEntity(System.String)">
+            <summary>
+            Creates a new entity with the given class name.
+            </summary>
+            <remarks> You cannot create new worldspawn entities. </remarks>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="className"/> is invalid.
+            -or- <paramref name="className"/> is <c>worldspawn</c>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.CloneEntity(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>
+            Creates a clone of the given entity.
+            Does not clone any data associated with the entity such as brush data. Only keyvalues are cloned.
+            </summary>
+            <remarks> You cannot clone <c>worldspawn</c>.</remarks>
+            <exception cref="T:System.ArgumentNullException"><paramref name="entity"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="entity"/>is <c>worldspawn</c>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.System#Collections#Generic#ICollection{HalfLife#UnifiedSdk#Utilities#Entities#Entity}#Add(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <summary>Not supported. Use <see cref="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.CreateNewEntity(System.String)"/> or <see cref="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.CloneEntity(HalfLife.UnifiedSdk.Utilities.Entities.Entity)"/> instead.</summary>
+            <exception cref="T:System.NotSupportedException">Always thrown.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.Remove(HalfLife.UnifiedSdk.Utilities.Entities.Entity)">
+            <inheritdoc/>
+            <exception cref="T:System.ArgumentNullException"><paramref name="entity"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="entity"/> is worldspawn.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.RemoveAt(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.Clear">
+            <summary>Removes all entities except worldspawn, and removes all keyvalues from worldspawn.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.CopyTo(HalfLife.UnifiedSdk.Utilities.Entities.Entity[],System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.GetEnumerator">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.CreateNewEntityCore(System.String)">
+            <summary>Creates a new entity with the given classname.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityList.RemoveAtCore(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.Int32)">
+            <summary>Removes the given entity from the underlying list.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Entities.EntityListExtensions">
+            <summary>Extensions for <see cref="T:HalfLife.UnifiedSdk.Utilities.Entities.EntityList"/>.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityListExtensions.WithoutWorldspawn(HalfLife.UnifiedSdk.Utilities.Entities.EntityList)">
+            <summary>Gets a list of all entities except worldspawn.</summary>
+            <exception cref="T:System.ArgumentNullException"><paramref name="entityList"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityListExtensions.RenameClass(HalfLife.UnifiedSdk.Utilities.Entities.EntityList,System.String,System.String)">
+            <summary>
+            Renames all classes with the classname <paramref name="oldClassName"/> to <paramref name="newClassName"/>.
+            </summary>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="entityList"/>, <paramref name="oldClassName"/> or <paramref name="newClassName"/> are <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityListExtensions.RemoveAllOfClass(HalfLife.UnifiedSdk.Utilities.Entities.EntityList,System.String)">
+            <summary>Removes all entities with the given classname.</summary>
+            <exception cref="T:System.ArgumentNullException"><paramref name="entityList"/> or <paramref name="className"/> are <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="className"/> is <c>worldspawn</c>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityListExtensions.RemoveAll(HalfLife.UnifiedSdk.Utilities.Entities.EntityList,System.Predicate{HalfLife.UnifiedSdk.Utilities.Entities.Entity})">
+            <summary>Removes all entities that match the given predicate.</summary>
+            <returns><paramref name="entityList"/>.</returns>
+            <remarks><c>worldspawn</c> is not checked against <paramref name="predicate"/>.</remarks>
+            <exception cref="T:System.ArgumentNullException"><paramref name="entityList"/> or <paramref name="predicate"/> are <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityListExtensions.ForEachClass(HalfLife.UnifiedSdk.Utilities.Entities.EntityList,System.String,System.Action{HalfLife.UnifiedSdk.Utilities.Entities.Entity})">
+            <summary>
+            Invokes <paramref name="callback"/> on every entity with classname <paramref name="className"/>.
+            </summary>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="entityList"/>, <paramref name="className"/> or <paramref name="callback"/> are <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityListExtensions.ReplaceWith(HalfLife.UnifiedSdk.Utilities.Entities.EntityList,HalfLife.UnifiedSdk.Utilities.Entities.EntityList)">
+            <summary>
+            Replaces this entity list with the contents of another.
+            This is how Ripent works.
+            This will only work properly if the entity list is a <c>.bsp</c> file
+            and the other list is an <c>.ent</c> file made for this map.
+            </summary>
+            <returns><paramref name="entityList"/>.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="entityList"/> or <paramref name="other"/> are <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="entityList"/> and <paramref name="other"/> have differing content types.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityListExtensions.GenerateUniqueTargetName(HalfLife.UnifiedSdk.Utilities.Entities.EntityList,System.String)">
+            <summary>
+            Generates a unique targetname from a base name.
+            </summary>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="entityList"/> or <paramref name="baseName"/> are <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="baseName"/> is empty or contains only whitespace
+            -or- A unique targetname could not be generated for <paramref name="baseName"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EntityListExtensions.Find(HalfLife.UnifiedSdk.Utilities.Entities.EntityList,System.String)">
+            <summary>
+            Finds the first entity with the given targetname or <see langword="null"/> if no entity with that targetname exists.
+            </summary>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="entityList"/> or <paramref name="targetName"/> are <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Entities.EnumerableEntityExtensions">
+            <summary>Extensions for <see cref="T:System.Collections.Generic.IEnumerable`1"/> of <see cref="T:HalfLife.UnifiedSdk.Utilities.Entities.Entity"/>.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EnumerableEntityExtensions.OfClass(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Entities.Entity},System.String)">
+            <summary>Returns an enumerable collection of entities whose classname matches the given name.</summary>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="entityList"/> or <paramref name="className"/> are <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EnumerableEntityExtensions.WhereString(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Entities.Entity},System.String,System.String)">
+            <summary>Finds all entities that have the given key and value</summary>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="entityList"/>, <paramref name="key"/> or <paramref name="value"/> are <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EnumerableEntityExtensions.WhereTargetName(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Entities.Entity},System.String)">
+            <summary>Finds all entities that have the given targetname.</summary>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="entityList"/> or <paramref name="targetName"/> are <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EnumerableEntityExtensions.WhereTarget(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Entities.Entity},System.String)">
+            <summary>Finds all entities that have the given target.</summary>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="entityList"/> or <paramref name="target"/> are <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Entities.EnumerableEntityExtensions.WithoutWorldspawn(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Entities.Entity})">
+            <summary>Gets an enumerable collection of all entities except worldspawn.</summary>
+            <exception cref="T:System.ArgumentNullException"><paramref name="entityList"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Entities.RenderMode">
+            <summary>
+            Possible values for <c>rendermode</c> keyvalue.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Entities.RenderMode.RenderNormal">
+            <summary>src</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Entities.RenderMode.RenderTransColor">
+            <summary>c*a+dest*(1-a)</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Entities.RenderMode.RenderTransTexture">
+            <summary>src*a+dest*(1-a)</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Entities.RenderMode.RenderGlow">
+            <summary>src*a+dest -- No Z buffer checks</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Entities.RenderMode.RenderTransAlpha">
+            <summary>src*srca+dest*(1-srca)</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Entities.RenderMode.RenderTransAdd">
+            <summary>src*a+dest</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Games.GameEngine">
+            <summary>Game engine identifiers.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.GameEngine.GoldSource">
+            <summary>GoldSource engine. Also known as the Half-Life (1) engine, Valve Game Engine.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.GameEngine.Source">
+            <summary>Source engine.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.GameEngine.Source2">
+            <summary>Source 2 engine.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Games.GameInfo">
+            <summary>
+            Provides information about a game, such as the engine it is running on and which maps it has.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.GenericGoldSourceGame">
+            <summary>Generic GoldSource engine game info.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.GenericSourceGame">
+            <summary>Generic Source engine game info.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.GenericSource2Game">
+            <summary>Generic Source 2 engine game info.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.Engine">
+            <summary>Which engine this game is running on.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.Name">
+            <summary>Name of the game, for printing.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.ModDirectory">
+            <summary>
+            The name of the mod directory.
+            For GoldSource engine games this is the directory located in the Half-Life directory.
+            For Source engine games this is the directory located in the sourcemods directory.
+            Source 2 doesn't have mod support at present, so this value should be empty for that engine.
+            Will be empty if this is a generic game.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.Maps">
+            <summary>Dictionary of all official maps in this game.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.MusicFileNames">
+            <summary>Set of all music filenames used by this game.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.CampaignMaps">
+            <summary>Gets an enumerable collection of all of the campaign maps.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.TrainingMaps">
+            <summary>Gets an enumerable collection of all of the training maps.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.MultiplayerMaps">
+            <summary>Gets an enumerable collection of all of the multiplayer maps.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.#ctor(HalfLife.UnifiedSdk.Utilities.Games.GameEngine,System.String,System.String,System.Func{System.Collections.Immutable.ImmutableDictionary{System.String,HalfLife.UnifiedSdk.Utilities.Games.MapInfo}},System.Func{System.Collections.Immutable.ImmutableHashSet{System.String}})">
+            <summary>
+            Creates a new game info object.
+            </summary>
+            <param name="engine"><see cref="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.Engine"/></param>
+            <param name="name"><see cref="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.Name"/></param>
+            <param name="modDirectory"><see cref="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.ModDirectory"/></param>
+            <param name="maps">A function that returns a dictionary of map info. Will be invoked once if and when map info is requested.</param>
+            <param name="musicFileNames">
+            A function that returns a set of music filenames used by this game.
+            Will be invoked once if and when music info is requested.
+            </param>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="name"/>, <paramref name="modDirectory"/>,
+            <paramref name="maps"/> or <paramref name="musicFileNames"/> are <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.#ctor(HalfLife.UnifiedSdk.Utilities.Games.GameEngine,System.String,System.String,System.Func{System.Collections.Immutable.ImmutableDictionary{System.String,HalfLife.UnifiedSdk.Utilities.Games.MapInfo}})">
+            <summary>
+            Creates a new game info object.
+            </summary>
+            <param name="engine"><see cref="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.Engine"/></param>
+            <param name="name"><see cref="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.Name"/></param>
+            <param name="modDirectory"><see cref="P:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.ModDirectory"/></param>
+            <param name="maps">A function that returns a dictionary of map info. Will be invoked once if and when map info is requested.</param>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="name"/>, <paramref name="modDirectory"/> or <paramref name="maps"/> are <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.GetMaps(HalfLife.UnifiedSdk.Utilities.Games.MapCategory)">
+            <summary>Gets an enumerable collection of all of the maps of the given category.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.IsMap(System.String)">
+            <summary>Returns whether the given map name is a map in this game.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.IsMap(System.String,HalfLife.UnifiedSdk.Utilities.Games.MapCategory)">
+            <summary>Returns whether the given map name is a map of the given category in this game.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.IsCampaignMap(System.String)">
+            <summary>Returns whether the given map name is a campaign map in this game.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.IsTrainingMap(System.String)">
+            <summary>Returns whether the given map name is a training map in this game.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.IsMultiplayerMap(System.String)">
+            <summary>Returns whether the given map name is a multiplayer map in this game.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.Equals(System.Object)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.Equals(HalfLife.UnifiedSdk.Utilities.Games.GameInfo)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.op_Equality(HalfLife.UnifiedSdk.Utilities.Games.GameInfo,HalfLife.UnifiedSdk.Utilities.Games.GameInfo)">
+            <summary>
+            Indicates whether <paramref name="left"/> is equal to <paramref name="right"/>.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.op_Inequality(HalfLife.UnifiedSdk.Utilities.Games.GameInfo,HalfLife.UnifiedSdk.Utilities.Games.GameInfo)">
+            <summary>
+            Indicates whether <paramref name="left"/> is not equal to <paramref name="right"/>.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Games.GameMedia">
+            <summary>
+            Contains information about the contents of the <c>media</c> directory.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.GameMedia.MediaDirectory">
+            <summary> The directory name. </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.GameMedia.MusicExtension">
+            <summary> The music file extension. </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.GameMedia.HalfLifeMusicPrefix">
+            <summary> The prefix used for some of the music. </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.GameMedia.OpposingForceMusicPrefix">
+            <summary>
+            The prefix used for Opposing Force music (only in Unified SDK).
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.GameMedia.BlueShiftMusicPrefix">
+            <summary>
+            The prefix used for Blue Shift music (only in Unified SDK).
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.GameMedia.GameToMusicPrefixMap">
+            <summary> Map of mod directory to music prefix (only in Unified SDK). </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.GameMedia.MusicFileNames">
+            <summary>
+            List of music filenames.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.GameMedia.StopTrackId">
+            <summary> The track id used to signal that music should stop playing. </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.GameMedia.TrackToMusicMap">
+            <summary> Map of track ids to music filenames. </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameMedia.GetGameSpecificMusicName(System.String,System.String)">
+            <summary>
+            Given a music filename and a game name, returns a filename suitable for the given game.
+            </summary>
+            <remarks>
+            Some music names contain <c>Half-Life</c> in the name whilst others are named generically.
+            This provides a name that accounts for the differences in naming style.
+            </remarks>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="musicFileName"/> or <paramref name="gameName"/> are <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.GameMedia.GetMusicFileName(System.String)">
+            <summary>Gets the relative path to the music file with the given base name.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Games.MapCategory">
+            <summary>Category that a map belongs to.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.MapCategory.Campaign">
+            <summary>Campaign maps (c*a*, of*a*, ba_*, etc).</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.MapCategory.Training">
+            <summary>Training maps (Hazard course, Boot camp).</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Games.MapCategory.Multiplayer">
+            <summary>Multiplayer maps. Also includes co-op and CTF maps.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Games.MapInfo">
+            <summary>Provides information about a map, such as which type of map it is.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.MapInfo.#ctor(System.String,HalfLife.UnifiedSdk.Utilities.Games.MapCategory)">
+            <summary>Provides information about a map, such as which type of map it is.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Games.ValveGames">
+            <summary>Contains data about Valve games.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.HalfLife1">
+            <summary>Half-Life 1.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.OpposingForce">
+            <summary>Half-Life: Opposing Force.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.BlueShift">
+            <summary>Half-Life: Blue Shift.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.HalfLifeUplink">
+            <summary>Half-Life: Uplink.</summary>
+            <remarks>
+            Not included in the list of games because you can't install it through Steam,
+            it's located in a different directory and it uses the same mod directory.
+            </remarks>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.TeamFortressClassic">
+            <summary>Team Fortress Classic.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.DayOfDefeat">
+            <summary>Day of Defeat.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.Ricochet">
+            <summary>Ricochet.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.CounterStrike">
+            <summary>Counter-Strike.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.ConditionZero">
+            <summary>Counter-Strike: Condition Zero.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.ConditionZeroDeletedScenes">
+            <summary>Counter-Strike: Condition Zero Deleted Scenes.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.HalfLifeGames">
+            <summary>
+            List of all Valve-made Half-Life 1 games and expansion packs running on the GoldSource engine
+            installable through Steam supported by this tool.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.CounterStrikeGames">
+            <summary>
+            List of all Valve-made Counter-Strike games running on the GoldSource engine
+            installable through Steam supported by this tool.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.GoldSourceGames">
+            <summary>
+            List of all Valve-made games running on the GoldSource engine
+            installable through Steam supported by this tool.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.Games">
+            <summary>List of all Valve-made games installable through Steam supported by this tool.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.IsMap(System.String)">
+            <summary>Returns whether the given map name is a map in any Valve game.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.IsMap(System.String,HalfLife.UnifiedSdk.Utilities.Games.MapCategory)">
+            <summary>Returns whether the given map name is a map of the given category in any Valve game.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.IsCampaignMap(System.String)">
+            <summary>Returns whether the given map name is a campaign map in any Valve game.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.IsTrainingMap(System.String)">
+            <summary>Returns whether the given map name is a training map in any Valve game.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.IsMultiplayerMap(System.String)">
+            <summary>Returns whether the given map name is a multiplayer map in any Valve game.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Logging.LoggerBinder">
+            <summary>
+            Provides a <see cref="T:Serilog.ILogger"/> in a <see cref="T:System.CommandLine.Command"/> handler.
+            The logger is configured to log to the console and to the Visual Studio debug output window (when running with Visual Studio).
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Logging.LoggerBinder.Instance">
+            <summary>Singleton binder instance.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.LoggerBinder.#ctor">
+            <summary>Creates a binder that uses the <see cref="F:Serilog.Events.LogEventLevel.Information"/> log level.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.LoggerBinder.#ctor(System.CommandLine.Option{System.Boolean})">
+            <summary>Creates a binder that uses the given option to indicate verbose logging.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.LoggerBinder.#ctor(System.Func{System.CommandLine.Binding.BindingContext,Serilog.Events.LogEventLevel})">
+            <summary>Creates a binder that uses the given delegate to get the log event level.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.LoggerBinder.GetBoundValue(System.CommandLine.Binding.BindingContext)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.LoggerBinder.CreateLogger(Serilog.Events.LogEventLevel)">
+            <summary>Creates a logger with the given minimum level.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.DiagnosticsEventTypes">
+            <summary>Bit flags to indicate which diagnostics events to log.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.DiagnosticsEventTypes.None">
+            <summary>Don't log anything.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.DiagnosticsEventTypes.EntityCreated">
+            <summary>Log entity created events.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.DiagnosticsEventTypes.EntityRemoved">
+            <summary>Log entity removed events.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.DiagnosticsEventTypes.KeyValueAdded">
+            <summary>Log keyvalue added events.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.DiagnosticsEventTypes.KeyValueChanged">
+            <summary>Log keyvalue changed events.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.DiagnosticsEventTypes.KeyValueRemoved">
+            <summary>Log keyvalue removed events.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.DiagnosticsEventTypes.AllKeyValuesRemoved">
+            <summary>Log all keyvalues removed events.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.DiagnosticsEventTypes.All">
+            <summary>Log all events.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsBuilder">
+            <summary>Builds map diagnostics engines.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsBuilder.WithEventTypes(HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.DiagnosticsEventTypes)">
+            <summary>Sets the enabled event types to the given types.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsBuilder.EnableEventTypes(HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.DiagnosticsEventTypes)">
+            <summary>Enables the given event types.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsBuilder.DisableEventTypes(HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.DiagnosticsEventTypes)">
+            <summary>Disables the given event types.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsBuilder.WithAllEventTypes">
+            <summary>Enables all event types.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsBuilder.WithNoEventTypes">
+            <summary>Disables all event types.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsBuilder.IgnoreKeys(System.String[])">
+            <summary>Adds the given keys to the set of keys to ignore.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsEngine">
+            <summary>
+            Listens to events raised by a map's entity list and logs them.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsEngine.Create(Serilog.ILogger,System.Action{HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsBuilder})">
+            <summary>Creates a new diagnostics engine.</summary>
+            <remarks>
+            The default configuration disables all event types, effectively logging nothing.
+            </remarks>
+            <param name="logger">Logger to use.</param>
+            <param name="configurator">Callback to configure the engine, or <see langword="null"/> to use the default configuration.</param>
+            <see cref="T:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsBuilder"/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsEngine.AddTo(HalfLife.UnifiedSdk.Utilities.Maps.Map)">
+            <summary>Adds diagnostics to the given map.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsEngine.RemoveFrom(HalfLife.UnifiedSdk.Utilities.Maps.Map)">
+            <summary>Removes diagnostics from the given map.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Maps.EnumerableMapExtensions">
+            <summary>Extensions for <see cref="T:System.Collections.Generic.IEnumerable`1"/> of <see cref="T:HalfLife.UnifiedSdk.Utilities.Maps.Map"/>.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Maps.EnumerableMapExtensions.WhereIsMap(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Maps.Map})">
+            <summary>Filters a sequence of maps to include only those that are Valve-made maps.</summary>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.IsMap(System.String)"/>
+            <exception cref="T:System.ArgumentNullException"><paramref name="maps"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Maps.EnumerableMapExtensions.WhereIsMap(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Maps.Map},HalfLife.UnifiedSdk.Utilities.Games.MapCategory)">
+            <summary>Filters a sequence of maps to include only those that are Valve-made maps of <paramref name="category"/>.</summary>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.IsMap(System.String,HalfLife.UnifiedSdk.Utilities.Games.MapCategory)"/>
+            <exception cref="T:System.ArgumentNullException"><paramref name="maps"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Maps.EnumerableMapExtensions.WhereIsCampaignMap(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Maps.Map})">
+            <summary>Filters a sequence of maps to include only those that are Valve-made campaign maps.</summary>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.IsCampaignMap(System.String)"/>
+            <exception cref="T:System.ArgumentNullException"><paramref name="maps"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Maps.EnumerableMapExtensions.WhereIsCampaignMap(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Maps.Map},HalfLife.UnifiedSdk.Utilities.Games.GameInfo)">
+            <summary>Filters a sequence of maps to include only those that are Valve-made campaign maps from <paramref name="game"/>.</summary>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.IsCampaignMap(System.String)"/>
+            <exception cref="T:System.ArgumentNullException"><paramref name="maps"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Maps.EnumerableMapExtensions.WhereIsTrainingMap(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Maps.Map})">
+            <summary>Filters a sequence of maps to include only those that are Valve-made training maps.</summary>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.IsTrainingMap(System.String)"/>
+            <exception cref="T:System.ArgumentNullException"><paramref name="maps"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Maps.EnumerableMapExtensions.WhereIsTrainingMap(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Maps.Map},HalfLife.UnifiedSdk.Utilities.Games.GameInfo)">
+            <summary>Filters a sequence of maps to include only those that are Valve-made training maps from <paramref name="game"/>.</summary>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.IsTrainingMap(System.String)"/>
+            <exception cref="T:System.ArgumentNullException"><paramref name="maps"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Maps.EnumerableMapExtensions.WhereIsMultiplayerMap(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Maps.Map})">
+            <summary>Filters a sequence of maps to include only those that are Valve-made multiplayer maps.</summary>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Games.ValveGames.IsMultiplayerMap(System.String)"/>
+            <exception cref="T:System.ArgumentNullException"><paramref name="maps"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Maps.EnumerableMapExtensions.WhereIsMultiplayerMap(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Maps.Map},HalfLife.UnifiedSdk.Utilities.Games.GameInfo)">
+            <summary>Filters a sequence of maps to include only those that are Valve-made multiplayer maps from <paramref name="game"/>.</summary>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Games.GameInfo.IsMultiplayerMap(System.String)"/>
+            <exception cref="T:System.ArgumentNullException"><paramref name="maps"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Maps.Map">
+            <summary>Provides access to map data.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Maps.Map.FileName">
+            <summary>File name of this map.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Maps.Map.BaseName">
+            <summary>
+            Base name of the map, used in trigger_changelevel and the changelevel command among other things.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Maps.Map.ContentType">
+            <summary>Which content type the map data is in.</summary>
+            <seealso cref="T:HalfLife.UnifiedSdk.Utilities.Maps.MapContentType"/>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Maps.Map.IsCompiled">
+            <summary>Whether this map is a compiled or in a source content type.</summary>
+            <seealso cref="T:HalfLife.UnifiedSdk.Utilities.Maps.MapContentType"/>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Maps.Map.Entities">
+            <summary>List of entities in the map.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Maps.Map.#ctor(System.String,HalfLife.UnifiedSdk.Utilities.Maps.MapContentType)">
+            <summary>Creates a map data object.</summary>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="fileName"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Maps.Map.CreateEntities">
+            <summary>Creates an entity list from this map's data. The entity list can modify the map's entities.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Maps.Map.Serialize(System.IO.Stream)">
+            <summary>Serializes this map to the given stream.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Maps.Map.ToString">
+            <inheritdoc/>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Maps.MapContentType">
+            <summary>The type of content a map has.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Maps.MapContentType.Source">
+            <summary>A map source, like <c>.map</c>.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Maps.MapContentType.Compiled">
+            <summary>
+            A compiled map, like <c>.bsp</c> or <c>.ent</c>.
+            Compiled maps have a model key for brush entities filled in with the brush model index.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Serialization.EntFile.EntMap">
+            <summary>A Ripent <c>.ent</c> file. Contains only entity data in compiled form.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Serialization.EntFile.EntMap.#ctor(System.String,Sledge.Formats.Bsp.Lumps.Entities)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Serialization.EntFile.EntMap.Serialize(System.IO.Stream)">
+            <inheritdoc/>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Serialization.IMapSerializer">
+            <summary>Represents a means of deserializing maps.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Serialization.IMapSerializer.Extension">
+            <summary>Which file extension this serializer applies to (including the period ".").</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Serialization.IMapSerializer.Deserialize(System.String,System.IO.Stream)">
+            <summary>Deserializes a map into a <see cref="T:HalfLife.UnifiedSdk.Utilities.Maps.Map"/> object.</summary>
+            <param name="fileName">Name of the file being deserialized.</param>
+            <param name="stream">Stream to deserialize the map from.</param>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="fileName"/> is <see langword="null"/>, contains invalid characters or the extension is not supported.
+            -or- <paramref name="stream"/> contains an empty map.
+            -or- <paramref name="stream"/> contains a map whose first entity is not <c>worldspawn</c>.
+            -or- <paramref name="stream"/> contains a map with more than one <c>worldspawn</c>.
+            </exception>
+            <exception cref="T:System.IO.IOException">An IO error occurred during deserialization.</exception>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Serialization.InvalidFormatException">
+            <summary>
+            Represents errors that occur during map loading.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Serialization.InvalidFormatException.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Serialization.InvalidFormatException.#ctor(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Serialization.InvalidFormatException.#ctor(System.String,System.Exception)">
+            <inheritdoc/>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Serialization.SledgeBSPFile.BSPMapBase">
+            <summary>Base class for compiled maps.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Serialization.SledgeBSPFile.BSPMapBase._entitiesLump">
+            <summary>The entities lump object containing this map's entity data.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Serialization.SledgeBSPFile.BSPMapBase.#ctor(System.String,Sledge.Formats.Bsp.Lumps.Entities)">
+            <summary>Creates a new map with the given file name and entities lump.</summary>
+            <exception cref="T:System.ArgumentNullException"><paramref name="fileName"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="entitiesLump"/> contains no entities.
+            -or- <paramref name="entitiesLump"/>'s first entity is not <c>worldspawn</c>.
+            -or- <paramref name="entitiesLump"/> has more than one <c>worldspawn</c>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Serialization.SledgeMapFile.MapFileMap.RemoveEntity(Sledge.Formats.Map.Objects.MapObject,Sledge.Formats.Map.Objects.Entity)">
+            <summary>
+            This can never remove worldspawn
+            </summary>
+            <param name="obj"></param>
+            <param name="entity"></param>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities">
+            <summary>Constants and utility functions for dealing with keyvalues.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.ClassName">
+            <summary>The <c>classname</c> key.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.SpawnFlags">
+            <summary>The <c>spawnflags</c> key.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.Model">
+            <summary>The <c>model</c> key.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.TargetName">
+            <summary>The <c>targetname</c> key.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.Target">
+            <summary>The <c>target</c> key.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.GlobalName">
+            <summary>The <c>globalname</c> key.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.Delay">
+            <summary>The <c>delay</c> key.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.Origin">
+            <summary>The <c>origin</c> key.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.Angles">
+            <summary>The <c>angles</c> key.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.RenderMode">
+            <summary>The <c>rendermode</c> key.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.RenderAmount">
+            <summary>The <c>renderamt</c> key.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.RenderColor">
+            <summary>The <c>rendercolor</c> key.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.WorldspawnClassName">
+            <summary>The <c>worldspawn</c> class name.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.EmptyMapString">
+            <summary>
+            A string containing the empty map. An empty map has a worldspawn entity with no additional entities or keyvalues.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.ValidateClassName(System.String)">
+            <summary>Validates that <paramref name="value"/> is a valid class name.</summary>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="value"/> is invalid.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.IsWorldspawnClass(System.String)">
+            <summary>Returns whether the given value is the <c>worldspawn</c> class name.</summary>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.IsBSPSubModelIndex(System.String)">
+            <summary>Returns whether the given string is a BSP submodel index (<c>"*&lt;number&gt;"</c>).</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.IsBSPModelFileName(System.String)">
+            <summary>Returns whether the given string is a BSP file name (<c>"maps/&lt;name&gt;.bsp"</c>).</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.IsStudioModelFileName(System.String)">
+            <summary>Returns whether the given string is a studiomodel file name (<c>"maps/&lt;name&gt;.mdl"</c>).</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.IsSpriteModelFileName(System.String)">
+            <summary>Returns whether the given string is a sprite model file name (<c>"maps/&lt;name&gt;.spr"</c>).</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.IsAnyModelFileName(System.String)">
+            <summary>Returns whether the given string is a any model file name.</summary>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.IsBSPModelFileName(System.String)"/>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.IsStudioModelFileName(System.String)"/>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.IsSpriteModelFileName(System.String)"/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.IsSoundModelFileName(System.String)">
+            <summary>Returns whether the given string is a wave sound file name (<c>"&lt;name&gt;.wav"</c>).</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.TryParseBSPSubModelIndex(System.String,System.Int32@)">
+            <summary>Tries to parse out the bsp submodel index from a value.</summary>
+            <param name="value">Value to parse. Should be taken from a brush entity's <c>model</c> keyvalue.</param>
+            <param name="index"></param>
+            <returns><see langword="true"/> if the index could be succssfully parsed, <see langword="false"/> otherwise.</returns>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Tools.KeyValueUtilities.IsBSPSubModelIndex(System.String)"/>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats">
+            <summary>Provides the set of serializers and helpers to deserialize maps.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats.Map">
+            <summary>The <c>.map</c> file serializer.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats.Rmf">
+            <summary>The <c>.rmf</c> file serializer.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats.Bsp">
+            <summary>The <c>.bsp</c> file serializer.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats.Ent">
+            <summary>The <c>.ent</c> file serializer.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats.Serializers">
+            <summary>Dictionary of extension (including period ".") => serializer.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats.Deserialize(System.String,System.IO.Stream,HalfLife.UnifiedSdk.Utilities.Serialization.IMapSerializer)">
+            <summary>Deserializes a map from a stream.</summary>
+            <param name="fileName">Name of the file.</param>
+            <param name="stream">Stream containing a Half-Life 1 map.</param>
+            <param name="serializer">Serializer to use to deserialize the map.</param>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="fileName"/> is <see langword="null"/>, contains invalid characters or the extension is not supported.
+            </exception>
+            <exception cref="T:System.IO.IOException">An IO error occurred during deserialization.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats.Deserialize(System.String,HalfLife.UnifiedSdk.Utilities.Serialization.IMapSerializer)">
+            <summary>Deserializes a map from a file.</summary>
+            <param name="fileName">Path to the file to deserialize. The file must exist and must be a file containing a Half-Life 1 map.</param>
+            <param name="serializer">Serializer to use to deserialize the map.</param>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="fileName"/> is <see langword="null"/>, contains invalid characters or the extension is not supported.
+            </exception>
+            <exception cref="T:System.IO.IOException">An IO error occurred during deserialization.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats.Deserialize(System.String,System.IO.Stream)">
+            <summary>Deserializes a map from a file.</summary>
+            <param name="fileName">Path to the file to deserialize. The file must exist and must be a file containing a Half-Life 1 map.</param>
+            <param name="stream">Stream to deserialize from.</param>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="fileName"/> is <see langword="null"/>, contains invalid characters or the extension is not supported.
+            </exception>
+            <exception cref="T:System.IO.IOException">An IO error occurred during deserialization.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats.Deserialize(System.String)">
+            <summary>Deserializes a map from a file.</summary>
+            <param name="fileName">Path to the file to deserialize. The file must exist and must be a file containing a Half-Life 1 map.</param>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="fileName"/> is <see langword="null"/>, contains invalid characters or the extension is not supported.
+            </exception>
+            <exception cref="T:System.IO.IOException">An IO error occurred during deserialization.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats.EnumerateMaps(System.String[])">
+            <summary>
+            Returns an enumerable collection of maps in the given directories using known file extensions.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats.EnumerateMapsWithExtension(System.String,System.String[])">
+            <summary>
+            Returns an enumerable collection of maps in the given directories matching the given extension.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.MapFormats.CreateEntMap(System.String)">
+            <summary>
+            Creates an empty <c>.ent</c> map.
+            </summary>
+            <param name="fileName"></param>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.MathUtilities">
+            <summary> Helpers for performing math operations. </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.MathUtilities.AngleVectors(System.Numerics.Vector3,System.Numerics.Vector3@,System.Numerics.Vector3@,System.Numerics.Vector3@)">
+            <summary>
+            Converts angles expressed in degrees to a set of directional unit vectors.
+            </summary>
+            <param name="angles">Angles to convert.</param>
+            <param name="forward">Forward direction.</param>
+            <param name="right">Right direction.</param>
+            <param name="up">Up direction.</param>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities">
+            <summary>Constants and utility functions for dealing with mods.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.LiblistFileName">
+            <summary>The name of the liblist.gam file used to describe mod information.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.ContentTypes">
+            <summary>Types of content that can be enabled in Half-Life 1 mods.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.ContentTypes.HighDefinition">
+            <summary>The suffix used for high definition content directories.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.ContentTypes.LowViolence">
+            <summary>The suffix used for low violence content directories.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.ContentTypes.Addon">
+            <summary>The suffix used for addon content directories.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.ContentTypes.Downloads">
+            <summary>The suffix used for downloads content directories.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.ContentTypes.PublicTypes">
+            <summary>Content types that are "public", meaning they should be distributed with mods.</summary>
+            <remarks>
+            Addon is meant for user-installed content separate from a game or mod.
+            Downloads is meant for files downloaded from servers.
+            </remarks>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.ContentTypes.AllTypes">
+            <summary>All content types.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.AllPublicModDirectorySuffixes">
+            <summary>
+            Returns an enumerable collection of all mod directory suffixes that are considered to be "public",
+            meaning they should be distributed with mods.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.FormatModDirectory(System.String,System.String)">
+            <summary>Formats a mod directory that contains a suffix.</summary>
+            <seealso cref="T:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.ContentTypes"/>
+            <seealso cref="P:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.AllPublicModDirectorySuffixes"/>
+            <seealso cref="P:HalfLife.UnifiedSdk.Utilities.Tools.SteamUtilities.SteamLanguagesExceptEnglish"/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.EnumerateMods(System.String)">
+            <summary>
+            Returns an enumerable collection of mod directory names in a specified path.
+            A directory is considered to be a mod directory if it contains a <c>liblist.gam</c> file.
+            </summary>
+            <param name="gameDirectory">
+            Absolute or relative path to the game installation directory
+            (e.g. <c>C:\Program Files (x86)\Steam\steamapps\common\Half-Life</c>)
+            </param>
+            <exception cref="T:System.ArgumentNullException"><paramref name="gameDirectory"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ModUtilities.TryLoadLiblist(System.String,System.String)">
+            <summary>
+            Helper function to load a liblist file from a mod directory.
+            If the file exists and could be successfully opened and parsed, returns the liblist data.
+            </summary>
+            <exception cref="T:System.ArgumentNullException">
+            <paramref name="gameDirectory"/> or <paramref name="modDirectory"/> are <see langword="null"/>.
+            </exception>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.ParsingUtilities">
+            <summary>
+            Helper functions for converting between strings and floating point data types using the invariant culture,
+            which matches the format used by the game.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ParsingUtilities.TryParseDouble(System.String,System.Double@)">
+            <summary>
+            Tries to parse a <see cref="T:System.Double"/> out of a <see cref="T:System.String"/> using the invariant culture.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ParsingUtilities.DoubleToString(System.Double)">
+            <summary>
+            Returns the string representation of <paramref name="value"/> using the invariant culture.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ParsingUtilities.TryParseFloat(System.String,System.Single@)">
+            <summary>
+            Tries to parse a <see cref="T:System.Single"/> out of a <see cref="T:System.String"/> using the invariant culture.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ParsingUtilities.FloatToString(System.Single)">
+            <summary>
+            Returns the string representation of <paramref name="value"/> using the invariant culture.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ParsingUtilities.ParseVectorComponents(System.String)">
+            <summary>
+            Parses <paramref name="value"/> into an array containing the components of a vector.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ParsingUtilities.ParseVector2(System.String)">
+            <summary>
+            Parses a <see cref="T:System.Numerics.Vector2"/> out of a <see cref="T:System.String"/> using the invariant culture.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="value"/> does not contain a <see cref="T:System.Numerics.Vector2"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ParsingUtilities.Vector2ToString(System.Numerics.Vector2)">
+            <summary>
+            Returns the string representation of <see cref="T:System.Numerics.Vector2"/> using the invariant culture.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ParsingUtilities.ParseVector3(System.String)">
+            <summary>
+            Parses a <see cref="T:System.Numerics.Vector3"/> out of a <see cref="T:System.String"/> using the invariant culture.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="value"/> does not contain a <see cref="T:System.Numerics.Vector3"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ParsingUtilities.Vector3ToString(System.Numerics.Vector3)">
+            <summary>
+            Returns the string representation of <see cref="T:System.Numerics.Vector3"/> using the invariant culture.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ParsingUtilities.ParseVector4(System.String)">
+            <summary>
+            Parses a <see cref="T:System.Numerics.Vector4"/> out of a <see cref="T:System.String"/> using the invariant culture.
+            </summary>
+            <exception cref="T:System.ArgumentNullException"><paramref name="value"/> is <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException"><paramref name="value"/> does not contain a <see cref="T:System.Numerics.Vector4"/>.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ParsingUtilities.Vector4ToString(System.Numerics.Vector4)">
+            <summary>
+            Returns the string representation of <see cref="T:System.Numerics.Vector4"/> using the invariant culture.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.Ripent">
+            <summary>Provides Ripent functionality.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.Ripent.Export(System.String,System.String)">
+            <summary>Creates a <c>.ent</c> file from a BSP file with the given name.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.Ripent.Export(System.String)">
+            <summary>Creates a <c>.ent</c> file from a BSP file with the same name.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.Ripent.Import(System.String,System.String)">
+            <summary>Overwrites the given BSP file's entity data with a <c>.ent</c> file with the given name.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.Ripent.Import(System.String)">
+            <summary>Overwrites the given BSP file's entity data with a <c>.ent</c> file with the same name.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.ScriptedSequenceUtilities">
+            <summary>Utility functionality for <c>scripted_sequence</c>.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.ScriptedSequenceUtilities.ClassName">
+            <summary>The <c>scripted_sequence</c> classname.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.ScriptedSequenceUtilities.TargetKey">
+            <summary>The <c>m_iszEntity</c> key name.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.ScriptedSequenceUtilities.IdleKey">
+            <summary>The <c>m_iszIdle</c> key name.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.ScriptedSequenceUtilities.PlayKey">
+            <summary>The <c>m_iszPlay</c> key name.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.ScriptedSequenceUtilities.KeysToCheck">
+            <summary>List of keys to check for animation names.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.ScriptedSequenceUtilities.RenameAnimations(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext,System.String,System.String,System.Collections.Immutable.ImmutableDictionary{System.String,System.String})">
+            <summary>
+            Given an NPC class name, model name and a dictionary of animation names, renames all animations used in scripted sequences.
+            </summary>
+            <param name="context">Context to operate on.</param>
+            <param name="npcName">Class name of the NPC to check. Can be null if there is no class.</param>
+            <param name="modelName">Name of the model to check.</param>
+            <param name="animationRemap">Dictionary of animation names to rename.</param>
+            <exception cref="T:System.ArgumentNullException">
+            If <paramref name="context"/>, <paramref name="modelName"/> or <paramref name="animationRemap"/> are null.
+            </exception>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.SentenceUtilities">
+            <summary>Helper functions for dealing with sentences.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.SentenceUtilities.ReplaceSentences(System.Collections.Generic.IEnumerable{HalfLife.UnifiedSdk.Utilities.Entities.Entity},System.Collections.Immutable.ImmutableDictionary{System.String,System.String})">
+            <summary>Remaps sentences listed in <paramref name="replacementMap"/>.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.SentenceUtilities.ReplaceSentences(HalfLife.UnifiedSdk.Utilities.Entities.Entity,System.String,System.Collections.Immutable.ImmutableDictionary{System.String,System.String})">
+            <summary>Remaps sentences listed in <paramref name="replacementMap"/>.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.SteamUtilities">
+            <summary>Helpers for querying Steam registry values on Windows.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.SteamUtilities.SteamLanguagesExceptEnglish">
+            <summary>Gets an immutable list of all Steam languages except English.</summary>
+            <remarks>
+            The default language for game assets is <c>english</c>, so this list can be used to format localization paths.
+            Not all languages have localization files.
+            </remarks>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.SteamUtilities.SteamLanguages">
+            <summary>Gets an immutable list of all Steam languages.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.SteamUtilities.TryGetModInstallPath">
+            <summary>
+            On Windows, tries to get the Half-Life mod install path from the registry key set by Steam.
+            </summary>
+            <returns>The path if it exists, <see langword="null"/> otherwise.</returns>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.SteamUtilities.TryGetSourceModInstallPath">
+            <summary>
+            On Windows, tries to get the Source mod install path (<c>steamapps/sourcemods</c>) from the registry key set by Steam.
+            </summary>
+            <returns>The path if it exists, <see langword="null"/> otherwise.</returns>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.SteamUtilities.TryGetSteamExePath">
+            <summary>
+            On Windows, tries to get the Steam executable path from the registry key set by Steam.
+            </summary>
+            <returns>The path if it exists, <see langword="null"/> otherwise.</returns>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.SteamUtilities.TryGetSteamPath">
+            <summary>
+            On Windows, tries to get the Steam directory path from the registry key set by Steam.
+            </summary>
+            <returns>The path if it exists, <see langword="null"/> otherwise.</returns>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.StringUtilities">
+            <summary>
+            utility functions for strings.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.StringUtilities.ConcatComments(System.String,System.ReadOnlySpan{System.Char})">
+            <summary>
+            Concatenates two strings containing comments.
+            If <paramref name="lhs"/> already has text in it <paramref name="rhs"/> will be added on a new line.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.StringUtilities.AddPrefixToAllLines(System.String,System.String)">
+            <summary>
+            Adds a prefix to every line.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.StringUtilities.IndentLines(System.String,System.Int32,System.Char,System.Boolean)">
+            <summary>
+            Indents lines in the string by <paramref name="indentLevel"/> levels using <paramref name="indentChar"/>.
+            Line endings are assumed to be <c>\n</c> only.
+            </summary>
+            <param name="text">Text to indent.</param>
+            <param name="indentLevel">How many occurrences of the indent character to add.</param>
+            <param name="indentChar">Characer to use as indentation.</param>
+            <param name="indentFirstLine">Whether to also indent the first line.</param>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.Tokenizer">
+            <summary>
+            Tokenizer that operates on a text span, extracting one token at a time.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.Tokenizer.SpecialCharacters">
+            <summary>
+            List of special characters.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.Tokenizer.SpecialCharactersWithColon">
+            <summary>
+            List of special characters including colon.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.Tokenizer.Text">
+            <summary>
+            Text span being operated on.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.Tokenizer.Token">
+            <summary>
+            The current token, or an empty span if no token has been extracted.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.Tokenizer.RemainingText">
+            <summary>
+            The text that remains to be processed.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.Tokenizer.Type">
+            <summary>
+            The type of the current token.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.Tokenizer.#ctor(System.ReadOnlySpan{System.Char},System.Boolean,System.Boolean)">
+            <summary>
+            Constructs a new tokenizer that operates on the given text span.
+            </summary>
+            <param name="text">Text to process.</param>
+            <param name="ignoreColon">If <see langword="true"/> the colon character <c>':'</c> will be treated as special.</param>
+            <param name="allowComments">
+            If <see langword="true"/> comments will be parsed with <see cref="P:HalfLife.UnifiedSdk.Utilities.Tools.Tokenizer.Type"/> set to <see cref="F:HalfLife.UnifiedSdk.Utilities.Tools.TokenType.Comment"/>.
+            </param>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.Tokenizer.Next">
+            <summary>
+            Extract the next token.
+            </summary>
+            <returns><see langword="true"/> if a token was extracted, <see langword="false"/> otherwise.</returns>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.TokenType">
+            <summary>
+            Possible values for the <see cref="T:HalfLife.UnifiedSdk.Utilities.Tools.Tokenizer"/> token type.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.TokenType.None">
+            <summary>
+            No token was parsed.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.TokenType.Text">
+            <summary>
+            A valid token was parsed.
+            </summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.TokenType.Comment">
+            <summary>
+            A comment was parsed.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.DelegatingMapUpgrade">
+            <summary>
+            An upgrade that invokes the given delegate to apply upgrades.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.DelegatingMapUpgrade.#ctor(System.Action{HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext})">
+            <summary>
+            Creates a new delegating upgrade.
+            </summary>
+            <param name="upgrade">Delegate to invoke on apply.</param>
+            <exception cref="T:System.ArgumentNullException">If <paramref name="upgrade"/> is null.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.DelegatingMapUpgrade.ApplyCore(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.GameSpecificMapUpgrade">
+            <summary>
+            Helper class to apply an upgrade to a specific game.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.GameSpecificMapUpgrade.GameInfo">
+            <summary>
+            The game that this upgrade applies to.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.GameSpecificMapUpgrade.#ctor(HalfLife.UnifiedSdk.Utilities.Games.GameInfo)">
+            <summary>
+            Creates an upgrade that applies only to the specified game.
+            </summary>
+            <param name="gameInfo"></param>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.GameSpecificMapUpgrade.Filter(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapSpecificUpgrade">
+            <summary>
+            Helper class to apply an upgrade to a specific map.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapSpecificUpgrade.MapNames">
+            <summary>
+            The maps that this upgrade applies to.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapSpecificUpgrade.#ctor(System.String[])">
+            <summary>
+            Creates an upgrade that applies only to the specified maps.
+            </summary>
+            <param name="mapNames"></param>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapSpecificUpgrade.#ctor(System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Creates an upgrade that applies only to the specified maps.
+            </summary>
+            <param name="mapNames"></param>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapSpecificUpgrade.Filter(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext)">
+            <inheritdoc/>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgrade">
+            <summary>
+            Represents a single upgrade applied as part of an upgrade collection.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgrade.Apply(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext)">
+            <summary>
+            Applies this upgrade to the given map.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgrade.Filter(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext)">
+            <summary>
+            Checks if this upgrade should be applied to the given map.
+            </summary>
+            <returns><see langword="true"/> if the upgrade should be applied, <see langword="false"/> otherwise.</returns>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgrade.ApplyCore(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext)">
+            <summary>
+            Performs the actual upgrade.
+            </summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollection">
+            <summary>Represents an upgrade with events to apply changes.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollection.Version">
+            <summary>Version this applies to.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollection.CompareTo(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollection)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollection.GetHashCode">
+            <inheritdoc/>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollectionBuilder">
+            <summary>
+            Builds <see cref="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollection"/> objects.
+            Used as part of <see cref="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeToolBuilder"/>.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollectionBuilder.AddUpgrade(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgrade)">
+            <summary>
+            Adds a new upgrade.
+            </summary>
+            <param name="upgrade">Upgrade to add.</param>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollectionBuilder.AddUpgrade(System.Action{HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext})">
+            <summary>
+            Adds a new upgrade.
+            </summary>
+            <param name="upgrade">Upgrade delegate to add.</param>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCommand">
+            <summary>A map upgrade command.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCommand.Map">
+            <summary>Map being upgraded.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCommand.From">
+            <summary>
+            Version to upgrade from. If left as <see langword="null"/>, the map will be upgraded from its current version.
+            If no current version key can be found in the map, the map will be upgraded from the first known version.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCommand.To">
+            <summary>
+            Version to upgrade to. If left as <see langword="null"/>, the map will be upgraded to the latest version.
+            <see cref="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.LatestVersion"/>
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCommand.ThrowOnTooOldVersion">
+            <summary>
+            If <see cref="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCommand.From"/> is older than the version set by the map, throw an exception.
+            Default true. This protects against upgrading maps that are already upgraded, which could break entity setups.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCommand.GameInfo">
+            <summary>
+            Specifies which game the map is from.
+            If the map did not come from a game installation, use one of the generic game info objects.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCommand.#ctor(HalfLife.UnifiedSdk.Utilities.Maps.Map,HalfLife.UnifiedSdk.Utilities.Games.GameInfo)">
+            <summary>Creates a new map upgrde command.</summary>
+            <exception cref="T:System.ArgumentNullException"><paramref name="map"/> is null.</exception>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext">
+            <summary>
+            Context for map upgrade events.
+            </summary>
+            <remarks>
+            To get the version being upgraded to by the currently executing delegate, use <see cref="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollection.Version"/>
+            </remarks>
+            <param name="Tool">The tool performing the upgrade.</param>
+            <param name="FromVersion">The version being upgraded from.</param>
+            <param name="ToVersion">The version being upgraded.</param>
+            <param name="OriginalVersion">
+            The original version of the map, or <see cref="F:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.FirstVersion"/> if no version could be found.
+            </param>
+            <param name="Upgrade">The upgrade being applied.</param>
+            <param name="Map">The map being upgraded.</param>
+            <param name="GameInfo">Specifies which game the map is from.</param>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext.#ctor(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool,Semver.SemVersion,Semver.SemVersion,Semver.SemVersion,HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollection,HalfLife.UnifiedSdk.Utilities.Maps.Map,HalfLife.UnifiedSdk.Utilities.Games.GameInfo)">
+            <summary>
+            Context for map upgrade events.
+            </summary>
+            <remarks>
+            To get the version being upgraded to by the currently executing delegate, use <see cref="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollection.Version"/>
+            </remarks>
+            <param name="Tool">The tool performing the upgrade.</param>
+            <param name="FromVersion">The version being upgraded from.</param>
+            <param name="ToVersion">The version being upgraded.</param>
+            <param name="OriginalVersion">
+            The original version of the map, or <see cref="F:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.FirstVersion"/> if no version could be found.
+            </param>
+            <param name="Upgrade">The upgrade being applied.</param>
+            <param name="Map">The map being upgraded.</param>
+            <param name="GameInfo">Specifies which game the map is from.</param>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext.Tool">
+            <summary>The tool performing the upgrade.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext.FromVersion">
+            <summary>The version being upgraded from.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext.ToVersion">
+            <summary>The version being upgraded.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext.OriginalVersion">
+            <summary>
+            The original version of the map, or <see cref="F:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.FirstVersion"/> if no version could be found.
+            </summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext.Upgrade">
+            <summary>The upgrade being applied.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext.Map">
+            <summary>The map being upgraded.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeContext.GameInfo">
+            <summary>Specifies which game the map is from.</summary>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeException">
+            <summary>Represents errors that occur during the upgrading of a map.</summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeException.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeException.#ctor(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeException.#ctor(System.String,System.Exception)">
+            <inheritdoc/>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool">
+            <summary>
+            Tool to aid in the upgrading of maps from one version of a game to another.
+            This tool invokes a set of upgrades registered to versions of a game.
+            </summary>
+            <example>
+            A map made for version <c>1.0.0</c> upgraded to version <c>3.0.0</c> will have upgrades applied for versions
+            starting from the version after <c>1.0.0</c> up to and including <c>3.0.0</c>.
+            The map will have a keyvalue <c>UpgradeToolVersion</c> added containing the version it was upgraded to.
+            </example>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.DefaultGameVersionKey">
+            <summary>Worldspawn keyvalue used to track which version of a game a map is made for.</summary>
+        </member>
+        <member name="F:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.FirstVersion">
+            <summary>The first version that any map can be.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.Upgrades">
+            <summary>Gets a sorted immutable list containing the upgrades used by this tool.</summary>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.LatestVersion">
+            <summary>
+            Latest version to upgrade to.
+            Defaults to the upgrade with the newest version.
+            </summary>
+            <remarks>
+            If no upgrades were provided this will be <see cref="F:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.FirstVersion"/>.
+            If the last upgrade is not the latest version of the game, set this to the latest version to ensure upgrades work properly.
+            </remarks>
+        </member>
+        <member name="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.GameVersionKey">
+            <summary>
+            The <c>worldspawn</c> keyvalue key used to track the version of the game the map is made for.
+            Defaults to <see cref="F:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.DefaultGameVersionKey"/>
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.Upgrade(HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCommand)">
+            <summary>
+            Performs the upgrade of the given map from the given current version to the given target version.
+            </summary>
+            <param name="command">Map upgrade command.</param>
+            <returns>The version the map was upgraded from and the version the map was upgraded to.</returns>
+            <exception cref="T:System.ArgumentNullException"><paramref name="command"/> or <c>command.Map</c> are <see langword="null"/>.</exception>
+            <exception cref="T:System.ArgumentException">
+            If the map contains a <c>UpgradeToolVersion</c> value that is not a valid semantic version string.
+            </exception>
+            <exception cref="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeException">
+            If the version to upgrade from is older than the map version
+            and <see cref="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCommand.ThrowOnTooOldVersion"/> is <see langword="true"/>.
+            </exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.TryGetVersion(HalfLife.UnifiedSdk.Utilities.Maps.Map,Semver.SemVersion@)">
+            <summary>Tries to get the upgrade version of the given map.</summary>
+            <remarks>Uses <see cref="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.GameVersionKey"/> to get the version.</remarks>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.GetVersion(HalfLife.UnifiedSdk.Utilities.Maps.Map)">
+            <summary>
+            Gets the game version of the given map, or <see cref="F:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.FirstVersion"/> if no version can be found.
+            </summary>
+            <remarks>Uses <see cref="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.GameVersionKey"/> to get the version.</remarks>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.SetVersion(HalfLife.UnifiedSdk.Utilities.Maps.Map,Semver.SemVersion)">
+            <summary>Updates or adds the game version to the given map.</summary>
+            <remarks>Uses <see cref="P:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool.GameVersionKey"/> to set the version.</remarks>
+        </member>
+        <member name="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeToolBuilder">
+            <summary>
+            Builds <see cref="T:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeTool"/> objects.
+            </summary>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeToolBuilder.Build(System.Action{HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeToolBuilder})">
+            <summary>
+            Builds a map upgrade tool by invoking a callback which populates the list of upgrades.
+            </summary>
+            <param name="callback">Callback to invoke.</param>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeToolBuilder.AddUpgrades(Semver.SemVersion,System.Action{HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeCollectionBuilder})">
+            <summary>
+            Adds an upgrade to the tool.
+            </summary>
+            <param name="version">Version to associate to this upgrade.</param>
+            <param name="callback">Callback to invoke.</param>
+            <exception cref="T:System.ArgumentException">If the given version is already used by an existing upgrade.</exception>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeToolBuilder.WithDiagnostics(Serilog.ILogger,System.Action{HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsBuilder})">
+            <summary>Adds a diagnostics engine to use.</summary>
+            <exception cref="T:System.InvalidOperationException">If there is already a diagnostics engine.</exception>
+            <seealso cref="M:HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsEngine.Create(Serilog.ILogger,System.Action{HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsBuilder})"/>
+        </member>
+        <member name="M:HalfLife.UnifiedSdk.Utilities.Tools.UpgradeTool.MapUpgradeToolBuilder.WithDiagnostics(HalfLife.UnifiedSdk.Utilities.Logging.MapDiagnostics.MapDiagnosticsEngine)">
+            <summary>Adds a diagnostics engine to use.</summary>
+            <exception cref="T:System.InvalidOperationException">If there is already a diagnostics engine.</exception>
+        </member>
+    </members>
+</doc>

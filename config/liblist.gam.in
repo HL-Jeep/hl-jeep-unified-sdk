@@ -1,13 +1,11 @@
 // Valve Game Info file
 //  These are key/value pairs.  Certain mods will use different settings.
 //
-game "Half-Life Unified SDK"
+game "Half-Life: Jeep"
 icon "game"
-startmap "c0a0"
-trainmap "t0a0"
-mpentity "info_player_deathmatch"
+startmap "j1a1"
 gamedll "dlls\server.dll"
 gamedll_linux "dlls/server.so"
 gamedll_osx "dlls/server.dylib"
-secure "1"
+type "singleplayer_only"
 edicts "2048"
