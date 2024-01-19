@@ -1276,3 +1276,17 @@ bool CSittingScientist::FIdleSpeak()
 	CTalkMonster::g_talkWaitTime = 0;
 	return false;
 }
+
+class CScientistEnemy : public CScientist
+{
+public:
+	void Spawn() override;
+};
+
+LINK_ENTITY_TO_CLASS(monster_scientist_enemy, CScientistEnemy);
+
+void CScientistEnemy::Spawn()
+{
+	CScientist::Spawn();
+	Remember(bits_MEMORY_PROVOKED); // Enemy Scientists are always "provoked" by player
+}
