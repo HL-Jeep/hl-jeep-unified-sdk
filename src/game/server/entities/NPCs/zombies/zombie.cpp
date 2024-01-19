@@ -200,3 +200,17 @@ int CZombie::IgnoreConditions()
 
 	return iIgnore;
 }
+
+class CFastZombie : public CZombie
+{
+public:
+	void OnCreate() override;
+};
+
+LINK_ENTITY_TO_CLASS(monster_fast_zombie, CFastZombie);
+
+void CFastZombie::OnCreate()
+{
+	CZombie::OnCreate();
+	pev->model = MAKE_STRING("models/fast_zombie.mdl");
+}
