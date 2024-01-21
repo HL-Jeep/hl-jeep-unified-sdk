@@ -66,7 +66,7 @@ class CStomp : public CBaseEntity
 public:
 	void Spawn() override;
 	void Think() override;
-	static CStomp* StompCreate(const Vector& origin, const Vector& end, float speed);
+	static CStomp* StompCreate(const entvars_t* owner, const Vector& origin, const Vector& end, float speed);
 
 	float m_flLastThinkTime;
 
@@ -81,10 +81,11 @@ BEGIN_DATAMAP(CStomp)
 DEFINE_FIELD(m_flLastThinkTime, FIELD_TIME),
 	END_DATAMAP();
 
-CStomp* CStomp::StompCreate(const Vector& origin, const Vector& end, float speed)
+CStomp* CStomp::StompCreate(const entvars_t* owner, const Vector& origin, const Vector& end, float speed)
 {
 	CStomp* pStomp = g_EntityDictionary->Create<CStomp>("garg_stomp");
 
+	pStomp->pev->owner = owner->pContainingEntity;
 	pStomp->pev->origin = origin;
 	Vector dir = (end - origin);
 	pStomp->pev->scale = dir.Length();
@@ -140,7 +141,10 @@ void CStomp::Think()
 			owner = this;
 
 		if (pEntity)
-			pEntity->TakeDamage(this, owner, GetSkillFloat("gargantua_dmg_stomp"sv), DMG_SONIC);
+			if (owner->ClassnameIs("monster_gargantua"))
+				pEntity->TakeDamage(this, owner, GetSkillFloat("gargantua_dmg_stomp"sv), DMG_SONIC);
+			else
+				pEntity->TakeDamage(this, owner, GetSkillFloat("babygarg_dmg_stomp"sv), DMG_SONIC);
 	}
 
 	// Accelerate the effect
@@ -479,7 +483,7 @@ void CGargantua::StompAttack()
 	Vector vecEnd = (vecAim * 1024) + vecStart;
 
 	UTIL_TraceLine(vecStart, vecEnd, ignore_monsters, edict(), &trace);
-	CStomp::StompCreate(vecStart, trace.vecEndPos, 0);
+	CStomp::StompCreate(pev, vecStart, trace.vecEndPos, 0);
 	UTIL_ScreenShake(pev->origin, 12.0, 100.0, 2.0, 1000);
 	EmitSoundDyn(CHAN_WEAPON, RANDOM_SOUND_ARRAY(pStompSounds), 1.0, ATTN_GARG, 0, PITCH_NORM + RANDOM_LONG(-10, 10));
 
@@ -577,8 +581,11 @@ void CGargantua::FlameUpdate()
 				streaks = true;
 				UTIL_DecalTrace(&trace, DECAL_SMALLSCORCH1 + RANDOM_LONG(0, 2));
 			}
-			// RadiusDamage(trace.vecEndPos, this, this, GetSkillFloat("gargantua_dmg_fire"sv), DMG_BURN, Classify());
-			FlameDamage(vecStart, trace.vecEndPos, this, this, GetSkillFloat("gargantua_dmg_fire"sv), DMG_BURN, Classify());
+			
+			if (strcmp(STRING(pev->classname), "monster_gargantua") == 0)
+				FlameDamage(vecStart, trace.vecEndPos, this, this, GetSkillFloat("gargantua_dmg_fire"sv), DMG_BURN, Classify());
+			else
+				FlameDamage(vecStart, trace.vecEndPos, this, this, GetSkillFloat("babygarg_dmg_fire"sv), DMG_BURN, Classify());
 
 			MESSAGE_BEGIN(MSG_BROADCAST, SVC_TEMPENTITY);
 			WRITE_BYTE(TE_ELIGHT);
@@ -789,7 +796,8 @@ void CGargantua::TraceAttack(CBaseEntity* attacker, float flDamage, Vector vecDi
 		}
 	}
 
-	bitsDamageType &= GARG_DAMAGE;
+	if (strcmp(STRING(pev->classname), "monster_gargantua") == 0)
+		bitsDamageType &= GARG_DAMAGE;
 
 	if (bitsDamageType == 0)
 	{
@@ -827,20 +835,33 @@ void CGargantua::DeathEffect()
 	UTIL_MakeVectors(pev->angles);
 	Vector deathPos = pev->origin + gpGlobals->v_forward * 100;
 
+	// Set some scale values based on garg vs baby garg
+	float streak_scale = 0.6;
+	float streak_radius = 125;
+	float explosion_magnitude = 60;
+	float smoker_scale = 46;
+	if (strcmp(STRING(pev->classname), "monster_gargantua") != 0)
+	{
+		streak_scale = 0.3;
+		streak_radius = 60;
+		explosion_magnitude = 30;
+		smoker_scale = 32;
+	}
+
 	// Create a spiral of streaks
-	CSpiral::Create(deathPos, (pev->absmax.z - pev->absmin.z) * 0.6, 125, 1.5);
+	CSpiral::Create(deathPos, (pev->absmax.z - pev->absmin.z) * streak_scale, streak_radius, 1.5);
 
 	Vector position = pev->origin;
 	position.z += 32;
 	for (i = 0; i < 7; i += 2)
 	{
-		SpawnExplosion(position, 70, (i * 0.3), 60 + (i * 20));
+		SpawnExplosion(position, 70, (i * 0.3), explosion_magnitude + (i * 20));
 		position.z += 15;
 	}
 
 	CBaseEntity* pSmoker = CBaseEntity::Create("env_smoker", pev->origin, g_vecZero, nullptr);
 	pSmoker->pev->health = 1;						 // 1 smoke balls
-	pSmoker->pev->scale = 46;						 // 4.6X normal size
+	pSmoker->pev->scale = smoker_scale;				 // 4.6X normal size
 	pSmoker->pev->dmg = 0;							 // 0 radial distribution
 	pSmoker->pev->nextthink = gpGlobals->time + 2.5; // Start in 2.5 seconds
 }
@@ -912,7 +933,12 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 	case GARG_AE_SLASH_LEFT:
 	{
 		// HACKHACK!!!
-		CBaseEntity* pHurt = GargantuaCheckTraceHullAttack(GARG_ATTACKDIST + 10.0, GetSkillFloat("gargantua_dmg_slash"sv), DMG_SLASH);
+		CBaseEntity* pHurt = NULL;
+		if (strcmp(STRING(pev->classname), "monster_gargantua") == 0)
+			CBaseEntity* pHurt = GargantuaCheckTraceHullAttack(GARG_ATTACKDIST + 10.0, GetSkillFloat("gargantua_dmg_slash"sv), DMG_SLASH);
+		else 
+			CBaseEntity* pHurt = GargantuaCheckTraceHullAttack(GARG_ATTACKDIST + 10.0, GetSkillFloat("babygarg_dmg_slash"sv), DMG_SLASH);
+
 		if (pHurt)
 		{
 			if ((pHurt->pev->flags & (FL_MONSTER | FL_CLIENT)) != 0)
@@ -1270,4 +1296,42 @@ void SpawnExplosion(Vector center, float randomRange, float time, int magnitude)
 	pExplosion->Spawn();
 	pExplosion->SetThink(&CBaseEntity::SUB_CallUseToggle);
 	pExplosion->pev->nextthink = gpGlobals->time + time;
+}
+
+class CBabyGarg : public CGargantua
+{
+	void OnCreate() override;
+	bool TakeDamage(CBaseEntity* inflictor, CBaseEntity* attacker, float flDamage, int bitsDamageType) override;
+};
+
+LINK_ENTITY_TO_CLASS(monster_babygarg, CBabyGarg);
+
+void CBabyGarg::OnCreate()
+{
+	CBaseMonster::OnCreate();
+
+	pev->health = GetSkillFloat("babygarg_health"sv);
+	pev->model = MAKE_STRING("models/babygarg.mdl");
+
+	SetClassification("alien_monster");
+}
+
+bool CBabyGarg::TakeDamage(CBaseEntity* inflictor, CBaseEntity* attacker, float flDamage, int bitsDamageType)
+{
+	AILogger->debug("CBabyGarg::TakeDamage");
+
+	if (IsAlive())
+	{
+		// Unlike big garg, baby garg will still take damage from normal weapons, but only half as much
+		if ((bitsDamageType & GARG_DAMAGE) == 0)
+		{
+			flDamage *= 0.5;
+			SetConditions(bits_COND_LIGHT_DAMAGE);
+		}
+		
+		if ((bitsDamageType & (DMG_BLAST | DMG_ENERGYBEAM)) != 0)
+			SetConditions(bits_COND_HEAVY_DAMAGE);
+	}
+
+	return CBaseMonster::TakeDamage(inflictor, attacker, flDamage, bitsDamageType);
 }
