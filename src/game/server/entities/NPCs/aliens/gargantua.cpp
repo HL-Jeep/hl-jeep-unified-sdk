@@ -484,7 +484,8 @@ void CGargantua::StompAttack()
 
 	UTIL_TraceLine(vecStart, vecEnd, ignore_monsters, edict(), &trace);
 	CStomp::StompCreate(pev, vecStart, trace.vecEndPos, 0);
-	UTIL_ScreenShake(pev->origin, 12.0, 100.0, 2.0, 1000);
+	if (strcmp(STRING(pev->classname), "monster_gargantua") == 0)
+		UTIL_ScreenShake(pev->origin, 12.0, 100.0, 2.0, 1000);
 	EmitSoundDyn(CHAN_WEAPON, RANDOM_SOUND_ARRAY(pStompSounds), 1.0, ATTN_GARG, 0, PITCH_NORM + RANDOM_LONG(-10, 10));
 
 	UTIL_TraceLine(pev->origin, pev->origin - Vector(0, 0, 20), ignore_monsters, edict(), &trace);
@@ -961,7 +962,8 @@ void CGargantua::HandleAnimEvent(MonsterEvent_t* pEvent)
 
 	case GARG_AE_RIGHT_FOOT:
 	case GARG_AE_LEFT_FOOT:
-		UTIL_ScreenShake(pev->origin, 4.0, 3.0, 1.0, 750);
+		if (strcmp(STRING(pev->classname), "monster_gargantua") == 0)
+			UTIL_ScreenShake(pev->origin, 4.0, 3.0, 1.0, 750);
 		EmitSoundDyn(CHAN_BODY, RANDOM_SOUND_ARRAY(pFootSounds), 1.0, ATTN_GARG, 0, PITCH_NORM + RANDOM_LONG(-10, 10));
 		break;
 
