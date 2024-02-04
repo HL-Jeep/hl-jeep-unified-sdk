@@ -1324,15 +1324,14 @@ bool CBabyGarg::TakeDamage(CBaseEntity* inflictor, CBaseEntity* attacker, float 
 
 	if (IsAlive())
 	{
-		// Unlike big garg, baby garg will still take damage from normal weapons, but only half as much
+		// Unlike big garg, baby garg will still take damage from normal weapons, but still not much
 		if ((bitsDamageType & GARG_DAMAGE) == 0)
 		{
-			flDamage *= 0.5;
-			SetConditions(bits_COND_LIGHT_DAMAGE);
+			flDamage *= 0.1;
 		}
 		
 		if ((bitsDamageType & (DMG_BLAST | DMG_ENERGYBEAM)) != 0)
-			SetConditions(bits_COND_HEAVY_DAMAGE);
+			SetConditions(bits_COND_LIGHT_DAMAGE);
 	}
 
 	return CBaseMonster::TakeDamage(inflictor, attacker, flDamage, bitsDamageType);

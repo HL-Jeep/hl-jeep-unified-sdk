@@ -372,7 +372,7 @@ void CGauss::Fire(Vector vecOrigSrc, Vector vecDir, float flDamage)
 		if (0 != pEntity->pev->takedamage)
 		{
 			ClearMultiDamage();
-			pEntity->TraceAttack(m_pPlayer, flDamage, vecDir, &tr, DMG_BULLET);
+			pEntity->TraceAttack(m_pPlayer, flDamage, vecDir, &tr, DMG_ENERGYBEAM); // make gauss do energy beam damage
 			ApplyMultiDamage(m_pPlayer, m_pPlayer);
 		}
 
