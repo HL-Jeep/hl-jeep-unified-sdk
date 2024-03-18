@@ -709,3 +709,47 @@ void CDeadBarney::Spawn()
 
 	MonsterInitDead();
 }
+
+class CDina : public CBarney
+{
+	DECLARE_CLASS(CDina, CBarney);
+	DECLARE_DATAMAP();
+
+public:
+	void OnCreate() override;
+	void MonsterThink() override;
+
+	float m_lastHealTime = 0;
+};
+
+void CDina::OnCreate()
+{
+	CTalkMonster::OnCreate();
+
+	pev->health = GetSkillFloat("dina_health"sv);
+	pev->model = MAKE_STRING("models/kate.mdl");
+
+	SetClassification("player_ally");
+
+	m_iszUse = MAKE_STRING("BA_OK");
+	m_iszUnUse = MAKE_STRING("BA_WAIT");
+}
+
+void CDina::MonsterThink()
+{
+	CBaseMonster::MonsterThink();
+
+	float delta = gpGlobals->time - m_lastHealTime;
+	// Health regen
+	if (pev->health < GetSkillFloat("dina_health"sv)-10)
+	{
+		pev->health += 10 * delta;
+	}
+	m_lastHealTime = gpGlobals->time;
+}
+
+LINK_ENTITY_TO_CLASS(monster_dina, CDina);
+
+BEGIN_DATAMAP(CDina)
+DEFINE_FIELD(m_lastHealTime, FIELD_FLOAT),
+END_DATAMAP();
