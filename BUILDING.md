@@ -1,13 +1,13 @@
 # Building this SDK
 
-This tutorial expects a strong grasp of the basics of command line interfaces, version control, build systems (CMake, Visual Studio, Makefiles) and C++.
+This tutorial expects a strong grasp of of C++, build systems like Visual Studio or Make (depending on the platform you're developing for), CMake, command line interfaces, version control systems (Git in particular) and package managers (vcpkg in particular).
 
 All instructions for Linux development are written to apply to Ubuntu. Substitute commands and actions as needed for your distribution. It is expected that you understand how to work with the Linux terminal and command line.
 
 ## Minimum requirements
 
 The minimum requirements for this project are:
-* [CMake 3.23 or newer](https://cmake.org/download/) (Note: avoid versions 3.28 and newer for now as it fails to download vcpkg dependencies. See [this](https://github.com/microsoft/vcpkg/issues/33904) issue for more information)
+* [CMake 3.23 or newer](https://cmake.org/download/) (**Note**: avoid versions 3.28 and 3.28.1 as they fail to download vcpkg dependencies. See [this](https://github.com/microsoft/vcpkg/issues/33904) issue for more information)
 
 ### For Windows development
 
@@ -21,7 +21,7 @@ The minimum requirements for this project are:
         * C++ profiling tools
         * Windows 10 SDK (select the latest version)
 
-> **Note**: vcpkg uses the latest version of Visual Studio installed on your system to compile dependencies. Using an older version of Visual Studio to compile the SDK itself may cause compiler errors.
+> **Note**: vcpkg uses the latest version of Visual Studio installed on your system to compile dependencies. Using an older version of Visual Studio to compile the SDK itself may cause compiler errors. Always use the latest installed version of Visual Studio to build the SDK.
 
 ### For Linux development
 
