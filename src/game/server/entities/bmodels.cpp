@@ -178,6 +178,10 @@ public:
 	void Spawn() override;
 	bool KeyValue(KeyValueData* pkvd) override;
 	int ObjectCaps() override { return CBaseEntity::ObjectCaps() & ~FCAP_ACROSS_TRANSITION; }
+	void Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value) override;
+	void TurnOff();
+	void TurnOn();
+	bool IsOn();
 };
 
 LINK_ENTITY_TO_CLASS(func_illusionary, CFuncIllusionary);
@@ -200,10 +204,45 @@ void CFuncIllusionary::Spawn()
 	pev->solid = SOLID_NOT; // always solid_not
 	SetModel(STRING(pev->model));
 
+	if ((pev->spawnflags & SF_WALL_START_OFF) != 0)
+		TurnOff();
+
 	// I'd rather eat the network bandwidth of this than figure out how to save/restore
 	// these entities after they have been moved to the client, or respawn them ala Quake
 	// Perhaps we can do this in deathmatch only.
 	//	g_engfuncs.pfnMakeStatic(edict());
+}
+
+void CFuncIllusionary::TurnOff()
+{
+	pev->effects |= EF_NODRAW;
+	SetOrigin(pev->origin);
+}
+
+void CFuncIllusionary::TurnOn()
+{
+	pev->effects &= ~EF_NODRAW;
+	SetOrigin(pev->origin);
+}
+
+bool CFuncIllusionary::IsOn()
+{
+	if (pev->effects & EF_NODRAW)
+		return false;
+	return true;
+}
+
+void CFuncIllusionary::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+{
+	bool status = IsOn();
+
+	if (ShouldToggle(useType, status))
+	{
+		if (status)
+			TurnOff();
+		else
+			TurnOn();
+	}
 }
 
 /**
