@@ -109,6 +109,67 @@ void CBaseEntity::SUB_UseTargets(CBaseEntity* pActivator, USE_TYPE useType, floa
 	}
 }
 
+std::string StripWhitespace(std::string input)
+{
+	// Find first non-whitespace character
+	size_t first_non_space_index = 0;
+	for (size_t i = 0; i < input.length(); i++)
+	{
+		// Keep going until we find the first non-space character
+		first_non_space_index = i;
+		if (input[i] != ' ' && input[i] != '\t') break;
+	}
+	// String was all whitespace
+	if (first_non_space_index == input.length()-1) return "";
+	
+	// Find last non-whitespace character
+	size_t last_non_space_index = 0;
+	for (size_t i = input.length()-1; i >= 0; i--)
+	{
+		// Keep going until we find the first non-space character
+		last_non_space_index = i;
+		if (input[i] != ' ' && input[i] != '\t') break;
+	}
+
+	// Return the whitespace-free string
+	return input.substr(first_non_space_index, last_non_space_index - first_non_space_index + 1);
+}
+
+std::vector<std::string> TokenizeCommaSepString(std::string targetNameStr)
+{
+	std::vector<std::string> targets;
+
+	// See if we have multiple targets
+	size_t last_comma_index = 0;
+	size_t comma_index = targetNameStr.find(',');
+	if (comma_index != std::string::npos)
+	{
+		// Tokenize targets
+		while (comma_index != std::string::npos)
+		{
+			std::string token = StripWhitespace(targetNameStr.substr(last_comma_index, comma_index - last_comma_index));
+			if (token != "") targets.push_back(token);
+			last_comma_index = comma_index + 1;
+			comma_index = targetNameStr.find(',', last_comma_index);
+
+			if (comma_index == std::string::npos)
+			{
+				// Grab final token
+				std::string token = targetNameStr.substr(last_comma_index, targetNameStr.length() - last_comma_index);
+				targets.push_back(token);
+				break;
+			}
+		}
+	}
+	else
+	{
+		// Only one token
+		targets.push_back(targetNameStr);
+	}
+
+	return targets;
+}
+
 void FireTargets(const char* targetName, CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
 {
 	if (!targetName)
@@ -118,12 +179,17 @@ void FireTargets(const char* targetName, CBaseEntity* pActivator, CBaseEntity* p
 
 	CBaseEntity* target = nullptr;
 
-	while ((target = UTIL_FindEntityByTargetname(target, targetName, pActivator, pCaller)) != nullptr)
+	std::vector<std::string> targets = TokenizeCommaSepString(std::string(targetName));
+
+	for (std::string &target_token : targets)
 	{
-		if (target && (target->pev->flags & FL_KILLME) == 0) // Don't use dying ents
+		while ((target = UTIL_FindEntityByTargetname(target, target_token.c_str(), pActivator, pCaller)) != nullptr)
 		{
-			CBaseEntity::IOLogger->debug("Found: {}, firing ({})", STRING(target->pev->classname), targetName);
-			target->Use(pActivator, pCaller, useType, value);
+			if (target && (target->pev->flags & FL_KILLME) == 0) // Don't use dying ents
+			{
+				CBaseEntity::IOLogger->debug("Found: {}, firing ({})", STRING(target->pev->classname), target_token.c_str());
+				target->Use(pActivator, pCaller, useType, value);
+			}
 		}
 	}
 }
@@ -169,18 +235,23 @@ void CBaseDelay::SUB_UseTargets(CBaseEntity* pActivator, USE_TYPE useType, float
 		CBaseEntity::IOLogger->debug("KillTarget: {}", STRING(m_iszKillTarget));
 
 		CBaseEntity* killTarget = nullptr;
+		
+		std::vector<std::string> targets = TokenizeCommaSepString(std::string(STRING(m_iszKillTarget)));
 
-		while ((killTarget = UTIL_FindEntityByTargetname(killTarget, STRING(m_iszKillTarget), pActivator, this)) != nullptr)
+		for (std::string& target_token : targets)
 		{
-			if (UTIL_IsRemovableEntity(killTarget))
+			while ((killTarget = UTIL_FindEntityByTargetname(killTarget, target_token.c_str(), pActivator, this)) != nullptr)
 			{
-				UTIL_Remove(killTarget);
-				CBaseEntity::IOLogger->debug("killing {}", STRING(killTarget->pev->classname));
-			}
-			else
-			{
-				CBaseEntity::IOLogger->debug("Can't kill \"{}\": not allowed to remove entities of this type",
-					STRING(killTarget->pev->classname));
+				if (UTIL_IsRemovableEntity(killTarget))
+				{
+					UTIL_Remove(killTarget);
+					CBaseEntity::IOLogger->debug("killing {}", STRING(killTarget->pev->classname));
+				}
+				else
+				{
+					CBaseEntity::IOLogger->debug("Can't kill \"{}\": not allowed to remove entities of this type",
+						STRING(killTarget->pev->classname));
+				}
 			}
 		}
 	}
