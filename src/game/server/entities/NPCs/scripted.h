@@ -29,6 +29,7 @@
 #define SF_SCRIPT_NOINTERRUPT 32
 #define SF_SCRIPT_OVERRIDESTATE 64
 #define SF_SCRIPT_NOSCRIPTMOVEMENT 128
+#define SF_SCRIPT_DEATHANIMATION 512
 
 /**
  *	@brief Don't reset the entity's state after completing the script
