@@ -82,7 +82,7 @@ public:
 
 	int CountAmmo(const AmmoType* type);
 
-	HSPRITE* GetAmmoPicFromWeapon(int iAmmoId, Rect& rect);
+	HLSPRITE* GetAmmoPicFromWeapon(int iAmmoId, Rect& rect);
 };
 
 inline WeaponsResource gWR;

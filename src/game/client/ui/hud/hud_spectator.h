@@ -46,7 +46,7 @@ struct overviewInfo_t
 struct overviewEntity_t
 {
 
-	HSPRITE hSprite;
+	HLSPRITE hSprite;
 	cl_entity_t* entity;
 	double killTime;
 };
@@ -70,7 +70,7 @@ public:
 	int ToggleInset(bool allowOff);
 	void CheckSettings();
 	void InitHUDData() override;
-	bool AddOverviewEntityToList(HSPRITE sprite, cl_entity_t* ent, double killTime);
+	bool AddOverviewEntityToList(HLSPRITE sprite, cl_entity_t* ent, double killTime);
 	void DeathMessage(int victim);
 	bool AddOverviewEntity(int type, cl_entity_t* ent, const char* modelname);
 	void CheckOverviewEntities();
@@ -127,15 +127,15 @@ public:
 
 private:
 	Vector m_vPlayerPos[MAX_PLAYERS_HUD];
-	HSPRITE m_hsprPlayerBlue;
-	HSPRITE m_hsprPlayerRed;
-	HSPRITE m_hsprPlayer;
-	HSPRITE m_hsprCamera;
-	HSPRITE m_hsprPlayerDead;
-	HSPRITE m_hsprViewcone;
-	HSPRITE m_hsprUnkownMap;
-	HSPRITE m_hsprBeam;
-	HSPRITE m_hCrosshair;
+	HLSPRITE m_hsprPlayerBlue;
+	HLSPRITE m_hsprPlayerRed;
+	HLSPRITE m_hsprPlayer;
+	HLSPRITE m_hsprCamera;
+	HLSPRITE m_hsprPlayerDead;
+	HLSPRITE m_hsprViewcone;
+	HLSPRITE m_hsprUnkownMap;
+	HLSPRITE m_hsprBeam;
+	HLSPRITE m_hCrosshair;
 
 	Rect m_crosshairRect;
 

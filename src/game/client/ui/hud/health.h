@@ -49,14 +49,14 @@ public:
 	float m_HealthFade;
 
 private:
-	HSPRITE m_DamageDirectionsSprite;
+	HLSPRITE m_DamageDirectionsSprite;
 
 	DAMAGE_IMAGE m_dmg[NUM_DMG_TYPES];
 	int m_bitsDamage;
 
 	// Armor HUD
-	HSPRITE m_ArmorSprite1;
-	HSPRITE m_ArmorSprite2;
+	HLSPRITE m_ArmorSprite1;
+	HLSPRITE m_ArmorSprite2;
 	const Rect* m_ArmorSprite1Rect;
 	const Rect* m_ArmorSprite2Rect;
 	int m_iBat;

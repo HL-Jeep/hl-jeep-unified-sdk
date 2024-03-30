@@ -32,7 +32,7 @@ int HISTORY_DRAW_TIME = 5;
 struct ITEM_INFO
 {
 	char szName[MAX_ITEM_NAME];
-	HSPRITE spr;
+	HLSPRITE spr;
 	Rect rect;
 };
 
@@ -114,7 +114,7 @@ bool HistoryResource::DrawAmmoHistory(float flTime)
 			else if (rgAmmoHistory[i].type == HISTSLOT_AMMO)
 			{
 				Rect rcPic;
-				HSPRITE* spr = gWR.GetAmmoPicFromWeapon(rgAmmoHistory[i].iId, rcPic);
+				HLSPRITE* spr = gWR.GetAmmoPicFromWeapon(rgAmmoHistory[i].iId, rcPic);
 
 				float scale = (rgAmmoHistory[i].DisplayTime - flTime) * 80;
 				const auto color = gHUD.m_HudColor.Scale(std::min(scale, 255.f));

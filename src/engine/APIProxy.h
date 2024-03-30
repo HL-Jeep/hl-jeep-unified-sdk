@@ -46,7 +46,7 @@ struct cmdalias_t
 	char* value;
 };
 
-typedef int HSPRITE; // handle to a graphic
+typedef int HLSPRITE; // handle to a graphic
 
 /**
  *	@brief Functions exported by the client .dll
@@ -129,12 +129,12 @@ struct cldll_func_t
  */
 struct cl_enginefunc_t
 {
-	HSPRITE(*pfnSPR_Load)
+	HLSPRITE(*pfnSPR_Load)
 	(const char* szPicName);
-	int (*pfnSPR_Frames)(HSPRITE hPic);
-	int (*pfnSPR_Height)(HSPRITE hPic, int frame);
-	int (*pfnSPR_Width)(HSPRITE hPic, int frame);
-	void (*pfnSPR_Set)(HSPRITE hPic, int r, int g, int b);
+	int (*pfnSPR_Frames)(HLSPRITE hPic);
+	int (*pfnSPR_Height)(HLSPRITE hPic, int frame);
+	int (*pfnSPR_Width)(HLSPRITE hPic, int frame);
+	void (*pfnSPR_Set)(HLSPRITE hPic, int r, int g, int b);
 	void (*pfnSPR_Draw)(int frame, int x, int y, const Rect* prc);
 	void (*pfnSPR_DrawHoles)(int frame, int x, int y, const Rect* prc);
 	void (*pfnSPR_DrawAdditive)(int frame, int x, int y, const Rect* prc);
@@ -143,7 +143,7 @@ struct cl_enginefunc_t
 	[[deprecated("Use g_HudSpriteConfig instead")]] client_sprite_t* (*pfnSPR_GetList)(const char* psz, int* piCount);
 	void (*pfnFillRGBA)(int x, int y, int width, int height, int r, int g, int b, int a);
 	int (*pfnGetScreenInfo)(SCREENINFO* pscrinfo);
-	[[deprecated("Crosshair is drawn in CHudAmmo now")]] void (*pfnSetCrosshair)(HSPRITE hspr, Rect rc, int r, int g, int b);
+	[[deprecated("Crosshair is drawn in CHudAmmo now")]] void (*pfnSetCrosshair)(HLSPRITE hspr, Rect rc, int r, int g, int b);
 	cvar_t* (*pfnRegisterVariable)(const char* szName, const char* szValue, int flags);
 	float (*pfnGetCvarFloat)(const char* szName);
 	const char* (*pfnGetCvarString)(const char* szName);
@@ -198,7 +198,7 @@ struct cl_enginefunc_t
 	pmtrace_t* (*PM_TraceLine)(const float* start, const float* end, int flags, int usehull, int ignore_pe);
 	model_t* (*CL_LoadModel)(const char* modelname, int* index);
 	int (*CL_CreateVisibleEntity)(int type, cl_entity_t* ent);
-	const model_t* (*GetSpritePointer)(HSPRITE hSprite);
+	const model_t* (*GetSpritePointer)(HLSPRITE hSprite);
 	[[deprecated("Use PlaySoundByNameAtLocation in ISoundSystem.h instead")]] void (*pfnPlaySoundByNameAtLocation)(
 		const char* szSound, float volume, const float* origin);
 	unsigned short (*pfnPrecacheEvent)(int type, const char* psz);

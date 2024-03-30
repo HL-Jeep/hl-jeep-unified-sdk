@@ -41,17 +41,17 @@ void RegisterClientCommand(std::string_view name, void (T::*handler)(), T* insta
 
 inline cvar_t* CVAR_CREATE(const char* cv, const char* val, const int flags) { return gEngfuncs.pfnRegisterVariable(cv, val, flags); }
 
-inline HSPRITE SPR_Load(const char* spriteName)
+inline HLSPRITE SPR_Load(const char* spriteName)
 {
 	return gEngfuncs.pfnSPR_Load(spriteName);
 }
 
-inline HSPRITE SPR_Load(const std::string& spriteName)
+inline HLSPRITE SPR_Load(const std::string& spriteName)
 {
 	return gEngfuncs.pfnSPR_Load(spriteName.c_str());
 }
 
-inline void SPR_Set(HSPRITE hPic, const RGB24& color)
+inline void SPR_Set(HLSPRITE hPic, const RGB24& color)
 {
 	gEngfuncs.pfnSPR_Set(hPic, color.Red, color.Green, color.Blue);
 }
@@ -95,8 +95,8 @@ inline void FillRGBA(int x, int y, int width, int height, const RGB24& color, in
 
 
 // Gets the height & width of a sprite,  at the specified frame
-inline int SPR_Height(HSPRITE x, int f) { return gEngfuncs.pfnSPR_Height(x, f); }
-inline int SPR_Width(HSPRITE x, int f) { return gEngfuncs.pfnSPR_Width(x, f); }
+inline int SPR_Height(HLSPRITE x, int f) { return gEngfuncs.pfnSPR_Height(x, f); }
+inline int SPR_Width(HLSPRITE x, int f) { return gEngfuncs.pfnSPR_Width(x, f); }
 
 inline client_textmessage_t* TextMessageGet(const char* pName) { return gEngfuncs.pfnTextMessageGet(pName); }
 inline int TextMessageDrawChar(int x, int y, int number, int r, int g, int b)

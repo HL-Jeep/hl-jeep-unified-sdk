@@ -61,6 +61,8 @@ target_include_directories(client PRIVATE
 	../shared/utils
 	../../engine
 	../../../utils/vgui/include
+	../../../external/imgui
+	../../../external/imgui/backends
 	${OPENGL_INCLUDE_DIR})
 	
 target_compile_definitions(client PRIVATE
@@ -71,6 +73,7 @@ target_link_libraries(client PRIVATE
 	vgui
 	$<$<PLATFORM_ID:Windows>:delayimp>
 	$<$<PLATFORM_ID:Windows>:wsock32>
+	$<$<PLATFORM_ID:Windows>:opengl32>
 	SDL2
 	OpenAL::OpenAL
 	libnyquist)
@@ -302,6 +305,15 @@ target_sources(client PRIVATE
 	../../public/keydefs.h
 	../../public/cl_dll/IGameClientExports.h
 	../../public/steam/steamtypes.h
+	
+	../../../external/imgui/imgui.h
+	../../../external/imgui/imgui.cpp
+	../../../external/imgui/imgui_draw.cpp
+	../../../external/imgui/imgui_tables.cpp
+	../../../external/imgui/imgui_widgets.cpp
+	
+	../../../external/imgui/backends/imgui_impl_opengl2.h
+	../../../external/imgui/backends/imgui_impl_opengl2.cpp
 )
 
 add_game_shared_sources(client)

@@ -462,7 +462,7 @@ void CHudAmmo::Think()
 // Helper function to return a Ammo pointer from id
 //
 
-HSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, Rect& rect)
+HLSPRITE* WeaponsResource::GetAmmoPicFromWeapon(int iAmmoId, Rect& rect)
 {
 	for (auto& weapon : rgWeapons)
 	{
@@ -859,13 +859,13 @@ void CHudAmmo::UserCmd_PrevWeapon()
 	gpActiveSel = nullptr;
 }
 
-void CHudAmmo::SetCrosshair(HSPRITE sprite, Rect rect)
+void CHudAmmo::SetCrosshair(HLSPRITE sprite, Rect rect)
 {
 	m_Crosshair.sprite = sprite;
 	m_Crosshair.rect = rect;
 }
 
-void CHudAmmo::SetAutoaimCrosshair(HSPRITE sprite, Rect rect)
+void CHudAmmo::SetAutoaimCrosshair(HLSPRITE sprite, Rect rect)
 {
 	m_AutoaimCrosshair.sprite = sprite;
 	m_AutoaimCrosshair.rect = rect;

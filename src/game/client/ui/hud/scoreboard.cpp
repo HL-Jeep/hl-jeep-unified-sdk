@@ -28,7 +28,7 @@
 struct icon_sprite_t
 {
 	char szSpriteName[24];
-	HSPRITE spr;
+	HLSPRITE spr;
 	Rect rc;
 	RGB24 color;
 	unsigned char bFlags;

@@ -136,8 +136,8 @@ public:
 		m_DrawCrosshair = state;
 	}
 
-	void SetCrosshair(HSPRITE sprite, Rect rect);
-	void SetAutoaimCrosshair(HSPRITE sprite, Rect rect);
+	void SetCrosshair(HLSPRITE sprite, Rect rect);
+	void SetAutoaimCrosshair(HLSPRITE sprite, Rect rect);
 
 private:
 	void DrawCrosshair(int x, int y);
@@ -145,7 +145,7 @@ private:
 private:
 	struct Crosshair
 	{
-		HSPRITE sprite = 0;
+		HLSPRITE sprite = 0;
 		Rect rect{};
 	};
 
@@ -198,7 +198,7 @@ public:
 	void MsgFunc_Train(const char* pszName, BufferReader& reader);
 
 private:
-	HSPRITE m_hSprite;
+	HLSPRITE m_hSprite;
 	int m_iPos;
 };
 
@@ -351,9 +351,9 @@ class CHudFlashlight : public CHudBase
 private:
 	struct LightData
 	{
-		HSPRITE m_hSprite1 = 0;
-		HSPRITE m_hSprite2 = 0;
-		HSPRITE m_hBeam = 0;
+		HLSPRITE m_hSprite1 = 0;
+		HLSPRITE m_hSprite2 = 0;
+		HLSPRITE m_hBeam = 0;
 		const Rect* m_prc1 = nullptr;
 		const Rect* m_prc2 = nullptr;
 		const Rect* m_prcBeam = nullptr;
@@ -387,7 +387,7 @@ private:
 	LightData m_Flashlight;
 	LightData m_Nightvision;
 
-	HSPRITE m_nvSprite;
+	HLSPRITE m_nvSprite;
 
 	SuitLightType m_SuitLightType = SuitLightType::Flashlight;
 	float m_flBat;
@@ -512,7 +512,7 @@ private:
 	struct icon_sprite_t
 	{
 		char szSpriteName[MAX_ICONSPRITENAME_LENGTH];
-		HSPRITE spr;
+		HLSPRITE spr;
 		Rect rc;
 		RGB24 color;
 		int teamnumber; // Not actually used
@@ -550,7 +550,7 @@ private:
 	struct flag_sprite_t
 	{
 		char szSpriteName[MAX_FLAGSPRITENAME_LENGTH];
-		HSPRITE spr;
+		HLSPRITE spr;
 		Rect rc;
 		unsigned char r;
 		unsigned char g;
@@ -586,7 +586,7 @@ private:
 	struct powerup_sprite_t
 	{
 		char szSpriteName[MAX_POWERUPSPRITENAME_LENGTH];
-		HSPRITE spr;
+		HLSPRITE spr;
 		Rect rc;
 		RGB24 color;
 	};
@@ -704,7 +704,7 @@ struct HudSprite
 	eastl::fixed_string<char, MAX_SPRITE_NAME_LENGTH> Name;
 	eastl::fixed_string<char, MAX_QPATH> SpriteName;
 	Rect Rectangle;
-	HSPRITE Handle{0};
+	HLSPRITE Handle{0};
 };
 
 class CHud
@@ -715,7 +715,7 @@ private:
 
 	std::vector<CHudBase*> m_HudList;
 
-	HSPRITE m_hsprLogo = 0;
+	HLSPRITE m_hsprLogo = 0;
 	bool m_ShowLogo = false;
 	float m_flMouseSensitivity = 0;
 	int m_iConcussionEffect = 0;
@@ -725,7 +725,7 @@ private:
 	cvar_t* default_fov = nullptr;
 
 public:
-	HSPRITE m_hsprCursor;
+	HLSPRITE m_hsprCursor;
 	// In case we get messages before the first update -- time will be valid
 	float m_flTime = 1;		  // the current client time
 	float m_fOldTime = 0;	  // the time at which the HUD was last redrawn
@@ -775,7 +775,7 @@ public:
 	}
 
 public:
-	HSPRITE GetSprite(int index)
+	HLSPRITE GetSprite(int index)
 	{
 		return (index < 0) ? 0 : m_Sprites[index].Handle;
 	}
