@@ -6,4 +6,4 @@
 	url = https://github.com/ocornut/imgui.git
 [submodule "external/vlc"]
 	path = external/vlc
-	url = git@code.videolan.org:videolan/vlc.git
+	url = https://github.com/HL-Jeep/vlc.git
