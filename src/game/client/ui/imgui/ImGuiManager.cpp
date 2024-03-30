@@ -1,13 +1,18 @@
 #include "hud.h"
 #include "PlatformHeaders.h"
 #include "CImGuiMan.h"
+#include "ImGuiVideoPlayer.h"
 #include "SDL2/SDL.h"
 
 #include "cl_util.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 // Adapted from https://github.com/BlueNightHawk/hl_imgui_base
 
 CImGuiMan g_ImGuiMan;
+CImGuiVideoPlayer g_ImGuiVideoPlayer;
 extern modfuncs_s* g_pModFuncs;
 
 static void ImGuiRenderFunc()
@@ -51,6 +56,9 @@ void CImGuiMan::InitImgui()
 
 	SDL_AddEventWatch(ImGuiEventFilter, nullptr);
 
+	// Set up other ImGui stuff
+	g_ImGuiVideoPlayer.Init();
+
 	g_pModFuncs->m_pfnFrameRender2 = ImGuiRenderFunc;
 }
 
@@ -59,6 +67,7 @@ void CImGuiMan::ShutdownImgui()
 	SDL_DelEventWatch(ImGuiEventFilter, nullptr);
 
 	// Cleanup
+	g_ImGuiVideoPlayer.Shutdown();
 	ImGui_ImplOpenGL2_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
@@ -76,6 +85,8 @@ void CImGuiMan::RenderImGui()
 
 	if (g_ConCommands.GetCVar("np_imgui_demo") && g_ConCommands.GetCVar("np_imgui_demo")->value == 1)
 		ImGui::ShowDemoWindow();
+
+	g_ImGuiVideoPlayer.Render();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());

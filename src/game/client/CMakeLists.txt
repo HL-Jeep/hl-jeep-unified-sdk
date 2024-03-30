@@ -310,7 +310,11 @@ target_sources(client PRIVATE
 	
 	ui/imgui/CImGuiMan.h
 	ui/imgui/ImGuiManager.cpp
+	ui/imgui/ImGuiVideoPlayer.h
+	ui/imgui/ImGuiVideoPlayer.cpp
 	ui/imgui/sdl2_fix.cpp
+	ui/imgui/pl_mpeg.h
+	ui/imgui/stb_image.h
 	
 	../../../external/imgui/imgui.h
 	../../../external/imgui/imgui.cpp
