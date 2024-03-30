@@ -136,6 +136,11 @@ extern DECLSPEC int SDLCALL SDL_InitSubSystem(Uint32 flags);
  */
 extern DECLSPEC void SDLCALL SDL_QuitSubSystem(Uint32 flags);
 
+/* ImGui fixes */
+extern DECLSPEC void SDL_GL_GetDrawableSize(SDL_Window* window, int* w, int* h);
+extern DECLSPEC Uint32 SDL_GetGlobalMouseState(int* x, int* y);
+extern DECLSPEC int SDL_GetRendererOutputSize(SDL_Renderer* renderer, int* w, int* h);
+
 /**
  *  This function returns a mask of the specified subsystems which have
  *  previously been initialized.

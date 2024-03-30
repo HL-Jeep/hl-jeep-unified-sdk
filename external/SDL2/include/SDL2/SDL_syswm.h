@@ -33,7 +33,6 @@
 #include "SDL_video.h"
 #include "SDL_version.h"
 
-#include "begin_code.h"
 /* Set up for C function definitions, even when using C++ */
 #ifdef __cplusplus
 /* *INDENT-OFF* */
@@ -94,6 +93,9 @@ typedef struct _NSWindow NSWindow;
 typedef struct _UIWindow UIWindow;
 #endif
 #endif
+
+// This sneaky bugger has a #pragma pack in it that breaks windows.h if it's included before it
+#include "begin_code.h"
 
 /** 
  *  These are the various supported windowing subsystems

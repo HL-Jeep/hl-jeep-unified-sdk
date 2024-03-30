@@ -50,6 +50,7 @@ target_include_directories(client PRIVATE
 	particleman
 	rendering
 	ui
+	ui/imgui
 	ui/hud
 	ui/vgui
 	ui/vgui/utils
@@ -61,6 +62,7 @@ target_include_directories(client PRIVATE
 	../shared/utils
 	../../engine
 	../../../utils/vgui/include
+	../../../external/SDL2/include/SDL2
 	../../../external/imgui
 	../../../external/imgui/backends
 	${OPENGL_INCLUDE_DIR})
@@ -306,12 +308,19 @@ target_sources(client PRIVATE
 	../../public/cl_dll/IGameClientExports.h
 	../../public/steam/steamtypes.h
 	
+	ui/imgui/CImGuiMan.h
+	ui/imgui/ImGuiManager.cpp
+	ui/imgui/sdl2_fix.cpp
+	
 	../../../external/imgui/imgui.h
 	../../../external/imgui/imgui.cpp
+	../../../external/imgui/imgui_demo.cpp
 	../../../external/imgui/imgui_draw.cpp
 	../../../external/imgui/imgui_tables.cpp
 	../../../external/imgui/imgui_widgets.cpp
 	
+	../../../external/imgui/backends/imgui_impl_sdl2.h
+	../../../external/imgui/backends/imgui_impl_sdl2.cpp
 	../../../external/imgui/backends/imgui_impl_opengl2.h
 	../../../external/imgui/backends/imgui_impl_opengl2.cpp
 )
