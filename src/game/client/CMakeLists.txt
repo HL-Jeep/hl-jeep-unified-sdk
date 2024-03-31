@@ -65,6 +65,8 @@ target_include_directories(client PRIVATE
 	../../../external/SDL2/include/SDL2
 	../../../external/imgui
 	../../../external/imgui/backends
+	../../../external/avcodecs/include
+	../../../external/avcodecs/libavutil
 	${OPENGL_INCLUDE_DIR})
 	
 target_compile_definitions(client PRIVATE
@@ -78,6 +80,9 @@ target_link_libraries(client PRIVATE
 	$<$<PLATFORM_ID:Windows>:opengl32>
 	SDL2
 	OpenAL::OpenAL
+	$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/../../../external/avcodecs/lib/win32/libavcodec.a>
+	$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/../../../external/avcodecs/lib/win32/libavformat.a>
+	$<$<PLATFORM_ID:Windows>:${CMAKE_CURRENT_SOURCE_DIR}/../../../external/avcodecs/lib/win32/libavutil.a>
 	libnyquist)
 
 if (UNIX)
@@ -327,6 +332,8 @@ target_sources(client PRIVATE
 	../../../external/imgui/backends/imgui_impl_sdl2.cpp
 	../../../external/imgui/backends/imgui_impl_opengl2.h
 	../../../external/imgui/backends/imgui_impl_opengl2.cpp
+	
+	../../../external/avcodecs/libavutil/mem.cpp
 )
 
 add_game_shared_sources(client)
