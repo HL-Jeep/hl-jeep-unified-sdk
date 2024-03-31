@@ -2,12 +2,15 @@
 
 #include "cl_dll.h"
 #include "imgui.h"
+#include "SDL.h"
+#include "SDL_audio.h"
 #include "SDL_opengl.h"
 
 #define PL_MPEG_IMPLEMENTATION
 #include "pl_mpeg.h"
 
 #include "stb_image.h"
+
 
 // Simple helper function to load an image into a OpenGL texture with common settings
 bool LoadImageDataIntoTexture(unsigned char* image_data, int image_width, int image_height, GLuint* image_texture)
@@ -67,47 +70,82 @@ bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_wid
 
 void video_decode_callback(plm_t* plm, plm_frame_t* frame, void* user)
 {
-	unsigned char* m_image_data = (unsigned char*)user;
+	unsigned char* m_image_data = (unsigned char*) user;
 	// Do something with frame->y.data, frame->cr.data, frame->cb.data
-	plm_frame_to_rgba(frame, m_image_data, 544*4);
+	plm_frame_to_rgba(frame, m_image_data, 960*4);
 }
 
 void audio_decode_callback(plm_t* plm, plm_samples_t* frame, void* user)
 {
+	CImGuiVideoPlayer* player = (CImGuiVideoPlayer*) user;
 	// Do something with samples->interleaved
+	for (size_t i = 0; i < frame->count; i++)
+	{
+		player->PushAudioSample(frame->interleaved[i]);
+	}
+}
+
+void fill_audio(void* udata, Uint8* stream, int len)
+{
+	// In playback mode copy data to pOutput. In capture mode read data from pInput. In full-duplex mode, both
+	// pOutput and pInput will be valid and you can move data from pInput into pOutput. Never process more than
+	// frameCount frames.
+	CImGuiVideoPlayer* player = (CImGuiVideoPlayer*) udata;
+	SDL_MixAudio(stream, (Uint8*)player->AudioSampleData(), (len > player->NumAudioSamples() * sizeof(float) ? player->NumAudioSamples() * sizeof(float) : len), SDL_MIX_MAXVOLUME);
+	player->ClearAudioSamples();
 }
 
 void CImGuiVideoPlayer::Init()
 {
+	SDL_AudioSpec wanted;
+	SDL_AudioSpec obtained;
+
+	/* Set the audio format */
+	wanted.freq = 44100;
+	wanted.format = AUDIO_F32SYS;
+	wanted.channels = 1;
+	wanted.samples = 44100;
+	wanted.callback = fill_audio;
+	wanted.userdata = this;
+
+	/* Open the audio device, forcing the desired format */
+	if (SDL_OpenAudio(&wanted, NULL) < 0)
+	{
+		fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
+	}
+
+	m_audio_samples.reserve(44100);
+
 	float m_lastTime = gEngfuncs.GetClientTime();
 	// Create a OpenGL texture identifier
 	m_image_texture = (GLuint*) malloc(sizeof(GLuint));
 	glGenTextures(1, m_image_texture);
 	glBindTexture(GL_TEXTURE_2D, *m_image_texture);
 
-	m_image_width = 544;
-	m_image_height = 960;
+	m_image_width = 960;
+	m_image_height = 540;
 	m_image_depth = 4;
 	m_image_data = (unsigned char*) malloc(m_image_width * m_image_height * m_image_depth);
 
-	m_plm = plm_create_with_filename("jeep/media/subway_surfers.mpeg");
+	m_plm = plm_create_with_filename("jeep/media/bjork-all-is-full-of-love.mpeg");
 	plm_set_video_decode_callback(m_plm, video_decode_callback, m_image_data);
-	// plm_set_audio_decode_callback(plm, my_audio_callback, my_data);
+	plm_set_audio_decode_callback(m_plm, audio_decode_callback, this);
 }
 
 void CImGuiVideoPlayer::Render()
 {
+	SDL_PauseAudio(0);
 	if (!plm_has_ended(m_plm))
 	{
 		float currentTime = gEngfuncs.GetClientTime();
 		plm_decode(m_plm, currentTime - m_lastTime);
 		m_lastTime = currentTime;
 	}
-
+	
 	bool ret = LoadImageDataIntoTexture(m_image_data, m_image_width, m_image_height, m_image_texture);
 	
 	ImGui::Begin("Video Player");
-	ImGui::SetWindowSize(ImVec2(600, 1000));
+	ImGui::SetWindowSize(ImVec2(1000, 600));
 	ImGui::Image((void*)(intptr_t)*m_image_texture, ImVec2(m_image_width, m_image_height));
 	ImGui::End();
 	/*ImGui::Begin("Video Player", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
@@ -118,9 +156,30 @@ void CImGuiVideoPlayer::Render()
 	ImGui::End();*/
 }
 
+void CImGuiVideoPlayer::PushAudioSample(float sample)
+{
+	m_audio_samples.push_back(sample);
+}
+
+float* CImGuiVideoPlayer::AudioSampleData()
+{
+	return m_audio_samples.data();
+}
+
+size_t CImGuiVideoPlayer::NumAudioSamples()
+{
+	return m_audio_samples.size();
+}
+
+void CImGuiVideoPlayer::ClearAudioSamples()
+{
+	m_audio_samples.clear();
+}
+
 void CImGuiVideoPlayer::Shutdown()
 {
 	plm_destroy(m_plm);
 	free(m_image_data);
 	m_image_data = nullptr;
+	SDL_CloseAudio();
 }

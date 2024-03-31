@@ -315,6 +315,7 @@ target_sources(client PRIVATE
 	ui/imgui/sdl2_fix.cpp
 	ui/imgui/pl_mpeg.h
 	ui/imgui/stb_image.h
+	ui/imgui/miniaudio.h
 	
 	../../../external/imgui/imgui.h
 	../../../external/imgui/imgui.cpp
