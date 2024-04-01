@@ -77,14 +77,42 @@ void video_decode_callback(plm_t* plm, plm_frame_t* frame, void* user)
 	plm_frame_to_rgba(frame, player->GetImageBufferPtr(), 960 * 4);
 }
 
-void audio_decode_callback(plm_t* plm, plm_samples_t* frame, void* user)
+void audio_decode_callback(plm_t* plm, plm_samples_t* samples, void* user)
 {
 	CImGuiVideoPlayer* player = (CImGuiVideoPlayer*) user;
-	// Do something with samples->interleaved
-	for (size_t i = 0; i < frame->count; i++)
+
+	int size = sizeof(float) * samples->count * 2;
+
+	// memcpy samples into buffer
+	unsigned int remaining_buffer_length = player->m_audio_buffer_size-player->m_audio_write_index;
+	memcpy(player->m_audio_samples + player->m_audio_write_index, samples->interleaved, remaining_buffer_length > size ? size : remaining_buffer_length);
+	player->m_audio_write_index += remaining_buffer_length > size ? size : remaining_buffer_length;
+
+	/*for (size_t i = 0; i < (remaining_buffer_length > frame->count ? frame->count : remaining_buffer_length); i++)
 	{
-		player->PushAudioSample(frame->interleaved[i]);
+		player->m_audio_samples[i + player->m_audio_write_index] = frame->interleaved[i];
 	}
+	player->m_audio_write_index += remaining_buffer_length > frame->count ? frame->count : remaining_buffer_length;*/
+
+	// roll over into start of buffer if necessary
+	int remainder = size - remaining_buffer_length;
+	if (remainder > 0)
+	{
+		memcpy(player->m_audio_samples, samples->interleaved + (remaining_buffer_length/sizeof(float)/2), remainder);
+		player->m_audio_write_index = remainder;
+		
+		/*for (size_t i = 0; i < remainder; i++)
+		{
+			player->m_audio_samples[i] = samples->interleaved[i + remaining_buffer_length];
+		}
+		player->m_audio_write_index = remainder;*/
+	}
+
+	/*for (size_t i = 0; i < frame->count; i++)
+	{
+		player->m_audio_samples[i + player->m_audio_write_index] = frame->interleaved[i];
+	}
+	player->m_audio_write_index += frame->count;*/
 }
 
 void decode_mpeg(CImGuiVideoPlayer* player)
@@ -108,6 +136,7 @@ void decode_mpeg(CImGuiVideoPlayer* player)
 		}
 		float currentTime = gEngfuncs.GetClientTime();
 		plm_decode(plm, currentTime - player->m_lastTime);
+		plm_decode(plm, 1);
 		player->m_lastTime = currentTime;
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
@@ -120,30 +149,55 @@ void fill_audio(void* udata, Uint8* stream, int len)
 	// pOutput and pInput will be valid and you can move data from pInput into pOutput. Never process more than
 	// frameCount frames.
 	CImGuiVideoPlayer* player = (CImGuiVideoPlayer*) udata;
-	SDL_MixAudio(stream, (Uint8*)player->AudioSampleData(), (len > player->NumAudioSamples() * sizeof(float) ? player->NumAudioSamples() * sizeof(float) : len), SDL_MIX_MAXVOLUME);
-	player->ClearAudioSamples();
+
+	// Check if write index is ahead of read index
+	if (player->m_audio_write_index > player->m_audio_read_index)
+	{
+		// Queue the samples between read index and write index
+		unsigned int num_samples = player->m_audio_write_index - player->m_audio_read_index;
+		SDL_MixAudio(stream, (Uint8*)(player->m_audio_samples+player->m_audio_read_index), len > num_samples ? num_samples : len, SDL_MIX_MAXVOLUME);
+		player->m_audio_read_index += len > num_samples ? num_samples : len;
+	}
+	// Otherwise, write index has rolled over
+	else
+	{
+		// Queue the samples between read index and end of buffer
+		unsigned int num_samples = player->m_audio_buffer_size - player->m_audio_read_index - 1;
+		SDL_MixAudio(stream, player->m_audio_samples + player->m_audio_read_index, len > num_samples ? num_samples : len, SDL_MIX_MAXVOLUME);
+
+		// Queue the samples between start of buffer and write index
+		int new_length = len - len > num_samples ? num_samples : len;
+		if (new_length > 0)
+		{
+			num_samples = player->m_audio_write_index;
+			SDL_MixAudio(stream, player->m_audio_samples, new_length > num_samples ? num_samples : new_length, SDL_MIX_MAXVOLUME);
+			player->m_audio_read_index = new_length > num_samples ? num_samples : new_length;
+		}
+	}
 }
 
 void CImGuiVideoPlayer::Init()
 {
 	SDL_AudioSpec wanted;
-	SDL_AudioSpec obtained;
 
 	/* Set the audio format */
 	wanted.freq = 44100;
-	wanted.format = AUDIO_F32SYS;
-	wanted.channels = 1;
-	wanted.samples = 44100;
+	wanted.format = AUDIO_F32;
+	wanted.channels = 2;
+	wanted.samples = 4096;
 	wanted.callback = fill_audio;
 	wanted.userdata = this;
 
 	/* Open the audio device, forcing the desired format */
-	if (SDL_OpenAudio(&wanted, NULL) < 0)
+	m_audio_device = SDL_OpenAudioDevice(NULL, 0, &wanted, NULL, 0);
+	if (m_audio_device == 0)
 	{
-		fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
+		SDL_Log("Failed to open audio device: %s", SDL_GetError());
 	}
+	SDL_PauseAudioDevice(m_audio_device, 0);
 
-	m_audio_samples.reserve(44100);
+	m_audio_buffer_size = 44100 * 10 * sizeof(float) * 2 + 1; // Ten seconds of audio
+	m_audio_samples = (Uint8*)malloc(m_audio_buffer_size);
 
 	// Create a OpenGL texture identifier
 	m_image_texture = (GLuint*) malloc(sizeof(GLuint));
@@ -155,6 +209,8 @@ void CImGuiVideoPlayer::Init()
 	m_image_depth = 4;
 	m_image_data = (unsigned char*) malloc(m_image_width * m_image_height * m_image_depth);
 
+	m_audio_read_index = 0;
+	m_audio_write_index = 0;
 	m_reading_frame = false;
 	m_shutdown = false;
 	m_lastTime = 0;
@@ -164,7 +220,6 @@ void CImGuiVideoPlayer::Init()
 void CImGuiVideoPlayer::Render()
 {
 	m_reading_frame = true;
-	SDL_PauseAudio(0);
 	
 	bool ret = LoadImageDataIntoTexture(m_image_data, m_image_width, m_image_height, m_image_texture);
 	
@@ -180,26 +235,6 @@ void CImGuiVideoPlayer::Render()
 	ImGui::End();*/
 
 	m_reading_frame = false;
-}
-
-void CImGuiVideoPlayer::PushAudioSample(float sample)
-{
-	m_audio_samples.push_back(sample);
-}
-
-float* CImGuiVideoPlayer::AudioSampleData()
-{
-	return m_audio_samples.data();
-}
-
-size_t CImGuiVideoPlayer::NumAudioSamples()
-{
-	return m_audio_samples.size();
-}
-
-void CImGuiVideoPlayer::ClearAudioSamples()
-{
-	m_audio_samples.clear();
 }
 
 unsigned char* CImGuiVideoPlayer::GetImageBufferPtr()
