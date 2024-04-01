@@ -11,6 +11,8 @@
 
 #include "stb_image.h"
 
+#include <thread>
+#include <chrono>
 
 // Simple helper function to load an image into a OpenGL texture with common settings
 bool LoadImageDataIntoTexture(unsigned char* image_data, int image_width, int image_height, GLuint* image_texture)
@@ -70,9 +72,9 @@ bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_wid
 
 void video_decode_callback(plm_t* plm, plm_frame_t* frame, void* user)
 {
-	unsigned char* m_image_data = (unsigned char*) user;
+	CImGuiVideoPlayer* player = (CImGuiVideoPlayer*)user;
 	// Do something with frame->y.data, frame->cr.data, frame->cb.data
-	plm_frame_to_rgba(frame, m_image_data, 960*4);
+	plm_frame_to_rgba(frame, player->GetImageBufferPtr(), 960 * 4);
 }
 
 void audio_decode_callback(plm_t* plm, plm_samples_t* frame, void* user)
@@ -83,6 +85,33 @@ void audio_decode_callback(plm_t* plm, plm_samples_t* frame, void* user)
 	{
 		player->PushAudioSample(frame->interleaved[i]);
 	}
+}
+
+void decode_mpeg(CImGuiVideoPlayer* player)
+{
+	plm_t* plm;
+	plm = plm_create_with_filename("jeep/media/bjork-all-is-full-of-love.mpeg");
+	plm_set_video_decode_callback(plm, video_decode_callback, player);
+	plm_set_audio_decode_callback(plm, audio_decode_callback, player);
+
+	player->m_lastTime = gEngfuncs.GetClientTime();
+	while (!plm_has_ended(plm))
+	{
+		while (player->m_reading_frame)
+		{
+			// Wait for rendering to finish before overwriting the buffer
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		}
+		if (player->m_shutdown)
+		{
+			break;
+		}
+		float currentTime = gEngfuncs.GetClientTime();
+		plm_decode(plm, currentTime - player->m_lastTime);
+		player->m_lastTime = currentTime;
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+	}
+	plm_destroy(plm);
 }
 
 void fill_audio(void* udata, Uint8* stream, int len)
@@ -116,7 +145,6 @@ void CImGuiVideoPlayer::Init()
 
 	m_audio_samples.reserve(44100);
 
-	float m_lastTime = gEngfuncs.GetClientTime();
 	// Create a OpenGL texture identifier
 	m_image_texture = (GLuint*) malloc(sizeof(GLuint));
 	glGenTextures(1, m_image_texture);
@@ -127,20 +155,16 @@ void CImGuiVideoPlayer::Init()
 	m_image_depth = 4;
 	m_image_data = (unsigned char*) malloc(m_image_width * m_image_height * m_image_depth);
 
-	m_plm = plm_create_with_filename("jeep/media/bjork-all-is-full-of-love.mpeg");
-	plm_set_video_decode_callback(m_plm, video_decode_callback, m_image_data);
-	plm_set_audio_decode_callback(m_plm, audio_decode_callback, this);
+	m_reading_frame = false;
+	m_shutdown = false;
+	m_lastTime = 0;
+	m_decoder_thread = new std::thread(decode_mpeg, this);
 }
 
 void CImGuiVideoPlayer::Render()
 {
+	m_reading_frame = true;
 	SDL_PauseAudio(0);
-	if (!plm_has_ended(m_plm))
-	{
-		float currentTime = gEngfuncs.GetClientTime();
-		plm_decode(m_plm, currentTime - m_lastTime);
-		m_lastTime = currentTime;
-	}
 	
 	bool ret = LoadImageDataIntoTexture(m_image_data, m_image_width, m_image_height, m_image_texture);
 	
@@ -154,6 +178,8 @@ void CImGuiVideoPlayer::Render()
 	ImGui::SetWindowPos(ImVec2(0,0));
 	ImGui::Image((void*)(intptr_t)*m_image_texture, ImVec2(io.DisplaySize.x, io.DisplaySize.y));
 	ImGui::End();*/
+
+	m_reading_frame = false;
 }
 
 void CImGuiVideoPlayer::PushAudioSample(float sample)
@@ -176,9 +202,15 @@ void CImGuiVideoPlayer::ClearAudioSamples()
 	m_audio_samples.clear();
 }
 
+unsigned char* CImGuiVideoPlayer::GetImageBufferPtr()
+{
+	return m_image_data;
+}
+
 void CImGuiVideoPlayer::Shutdown()
 {
-	plm_destroy(m_plm);
+	m_shutdown = true;
+	m_decoder_thread->join();
 	free(m_image_data);
 	m_image_data = nullptr;
 	SDL_CloseAudio();
