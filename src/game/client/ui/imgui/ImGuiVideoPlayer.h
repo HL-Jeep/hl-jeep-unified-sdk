@@ -23,16 +23,13 @@ public:
 	bool m_reading_frame;
 	bool m_shutdown;
 	float m_lastTime;
-	Uint8* m_audio_samples;
-	int m_audio_buffer_size;
-	int m_audio_write_index;
-	int m_audio_read_index;
-	SDL_AudioDeviceID m_audio_device;
+
 private:
 	unsigned char* m_image_data;
 	GLuint *m_image_texture;
 	int m_image_width;
 	int m_image_height;
 	int m_image_depth;
+	std::vector<float> m_audio_samples;
 	std::thread *m_decoder_thread;
 };
