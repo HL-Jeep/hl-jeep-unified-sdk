@@ -4,6 +4,7 @@
 #include "stdint.h"
 #include "SDL.h"
 #include "SDL_opengl.h"
+#include "miniaudio.h"
 #include <vector>
 #include <thread>
 
@@ -32,4 +33,5 @@ private:
 	int m_image_depth;
 	std::vector<float> m_audio_samples;
 	std::thread *m_decoder_thread;
+	ma_engine m_ma_engine;
 };

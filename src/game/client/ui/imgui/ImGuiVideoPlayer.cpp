@@ -8,6 +8,8 @@
 
 #define PL_MPEG_IMPLEMENTATION
 #include "pl_mpeg.h"
+#define MINIAUDIO_IMPLEMENTATION
+#include "miniaudio.h"
 
 #include "stb_image.h"
 
@@ -92,7 +94,7 @@ void decode_mpeg(CImGuiVideoPlayer* player)
 	plm_t* plm;
 	plm = plm_create_with_filename("jeep/media/bjork-all-is-full-of-love.mpeg");
 	plm_set_video_decode_callback(plm, video_decode_callback, player);
-	plm_set_audio_decode_callback(plm, audio_decode_callback, player);
+	// plm_set_audio_decode_callback(plm, audio_decode_callback, player); // unused
 
 	player->m_lastTime = gEngfuncs.GetClientTime();
 	while (!plm_has_ended(plm))
@@ -109,42 +111,13 @@ void decode_mpeg(CImGuiVideoPlayer* player)
 		float currentTime = gEngfuncs.GetClientTime();
 		plm_decode(plm, currentTime - player->m_lastTime);
 		player->m_lastTime = currentTime;
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+		//std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
 	plm_destroy(plm);
 }
 
-void fill_audio(void* udata, Uint8* stream, int len)
-{
-	// In playback mode copy data to pOutput. In capture mode read data from pInput. In full-duplex mode, both
-	// pOutput and pInput will be valid and you can move data from pInput into pOutput. Never process more than
-	// frameCount frames.
-	CImGuiVideoPlayer* player = (CImGuiVideoPlayer*) udata;
-	SDL_MixAudio(stream, (Uint8*)player->AudioSampleData(), (len > player->NumAudioSamples() * sizeof(float) ? player->NumAudioSamples() * sizeof(float) : len), SDL_MIX_MAXVOLUME);
-	player->ClearAudioSamples();
-}
-
 void CImGuiVideoPlayer::Init()
 {
-	SDL_AudioSpec wanted;
-	SDL_AudioSpec obtained;
-
-	/* Set the audio format */
-	wanted.freq = 44100;
-	wanted.format = AUDIO_F32SYS;
-	wanted.channels = 1;
-	wanted.samples = 44100;
-	wanted.callback = fill_audio;
-	wanted.userdata = this;
-
-	/* Open the audio device, forcing the desired format */
-	if (SDL_OpenAudio(&wanted, NULL) < 0)
-	{
-		fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
-	}
-
-	m_audio_samples.reserve(44100);
-
 	// Create a OpenGL texture identifier
 	m_image_texture = (GLuint*) malloc(sizeof(GLuint));
 	glGenTextures(1, m_image_texture);
@@ -159,6 +132,18 @@ void CImGuiVideoPlayer::Init()
 	m_shutdown = false;
 	m_lastTime = 0;
 	m_decoder_thread = new std::thread(decode_mpeg, this);
+
+	ma_result result;
+
+	result = ma_engine_init(NULL, &m_ma_engine);
+	if (result == MA_SUCCESS)
+	{
+		ma_engine_play_sound(&m_ma_engine, "jeep/media/theme.mp3", NULL);
+	}
+	else
+	{
+		fprintf(stderr, "MINIAUDIO ERROR: %d", result);
+	}
 }
 
 void CImGuiVideoPlayer::Render()
@@ -213,5 +198,5 @@ void CImGuiVideoPlayer::Shutdown()
 	m_decoder_thread->join();
 	free(m_image_data);
 	m_image_data = nullptr;
-	SDL_CloseAudio();
+	ma_engine_uninit(&m_ma_engine);
 }
