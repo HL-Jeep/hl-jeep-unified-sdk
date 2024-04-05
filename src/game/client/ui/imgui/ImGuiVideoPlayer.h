@@ -28,6 +28,7 @@ public:
 	ma_engine m_ma_engine;
 	bool m_paused;
 	bool m_inactive;
+	bool m_video_done;
 	std::string m_path;
 	bool m_first_load;
 	int m_image_width;

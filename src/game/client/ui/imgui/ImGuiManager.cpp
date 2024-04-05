@@ -105,8 +105,8 @@ void CImGuiMan::InitImgui()
 
 	// Set up console commands
 	g_ConCommands.CreateCVar("np_imgui_demo", "0", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
-	g_ConCommands.CreateCVar("np_video_player", "0", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
-	g_ConCommands.CreateCVar("np_video_fullscreen", "0", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
+	g_ConCommands.CreateCVar("np_video_player", "1", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
+	g_ConCommands.CreateCVar("np_video_fullscreen", "1", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
 	g_ConCommands.CreateCVar("np_video_width", "0.75", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
 	g_ConCommands.CreateCVar("np_mouse", "0", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
 	g_ConCommands.CreateCommand("np_load_video", &ImGuiLoadVideo, CommandLibraryPrefix::No);

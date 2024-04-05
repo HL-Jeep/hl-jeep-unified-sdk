@@ -82,6 +82,7 @@ void decode_mpeg(CImGuiVideoPlayer* player)
 		// If we go *too* fast we'll run into floating point issues and never actually decode any frames
 		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
+	player->m_video_done = true;
 	plm_destroy(plm);
 }
 
@@ -90,7 +91,7 @@ void CImGuiVideoPlayer::Init()
 	// Create a OpenGL texture identifier
 	m_image_texture = (GLuint*) malloc(sizeof(GLuint));
 	glGenTextures(1, m_image_texture);
-	m_path = "bjork-all-is-full-of-love";
+	m_path = "intro";
 	
 	m_first_load = true;
 	LoadVideo(m_path);
@@ -159,6 +160,7 @@ bool CImGuiVideoPlayer::LoadVideo(std::string path)
 
 	m_reading_frame = false;
 	m_shutdown = false;
+	m_video_done = false;
 	m_decoder_thread = new std::thread(decode_mpeg, this);
 
 	return true;
@@ -166,7 +168,7 @@ bool CImGuiVideoPlayer::LoadVideo(std::string path)
 
 void CImGuiVideoPlayer::Render(int screen_width, int screen_height)
 {
-	if (m_inactive)
+	if (m_inactive || m_video_done)
 	{
 		m_paused = true;
 		ma_engine_stop(&m_ma_engine);
