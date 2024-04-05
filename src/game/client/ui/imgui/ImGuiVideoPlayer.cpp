@@ -5,6 +5,7 @@
 #include "SDL.h"
 #include "SDL_audio.h"
 #include "SDL_opengl.h"
+#include "SDL_input.h"
 
 #define PL_MPEG_IMPLEMENTATION
 #include "pl_mpeg.h"
@@ -66,8 +67,10 @@ bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_wid
 	stbi_image_free(image_data);
 
 	*out_texture = image_texture;
-	*out_width = image_width;
-	*out_height = image_height;
+	if (out_width)
+		*out_width = image_width;
+	if (out_height)
+		*out_height = image_height;
 
 	return true;
 }
@@ -96,7 +99,7 @@ void decode_mpeg(CImGuiVideoPlayer* player)
 	plm_set_video_decode_callback(plm, video_decode_callback, player);
 	// plm_set_audio_decode_callback(plm, audio_decode_callback, player); // unused
 
-	player->m_lastTime = gEngfuncs.GetClientTime();
+	player->m_lastTime = std::chrono::high_resolution_clock::now();
 	while (!plm_has_ended(plm))
 	{
 		while (player->m_reading_frame)
@@ -104,14 +107,29 @@ void decode_mpeg(CImGuiVideoPlayer* player)
 			// Wait for rendering to finish before overwriting the buffer
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		}
+
+		// Break out if we're trying to shut down
 		if (player->m_shutdown)
 		{
 			break;
 		}
-		float currentTime = gEngfuncs.GetClientTime();
-		plm_decode(plm, currentTime - player->m_lastTime);
-		player->m_lastTime = currentTime;
-		//std::this_thread::sleep_for(std::chrono::milliseconds(5));
+
+		// Decode
+		auto stop = std::chrono::high_resolution_clock::now();
+		auto time_passed = std::chrono::duration_cast<std::chrono::microseconds>(stop - player->m_lastTime);
+
+		// Check if we need to pause the video (and don't count it in the timer)
+		while (player->m_paused)
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		}
+
+		player->m_lastTime = std::chrono::high_resolution_clock::now();
+		double time_passed_seconds = time_passed.count() / 1000000.0;
+		plm_decode(plm, time_passed_seconds);
+
+		// If we go *too* fast we'll run into floating point issues and never actually decode any frames
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
 	}
 	plm_destroy(plm);
 }
@@ -121,7 +139,20 @@ void CImGuiVideoPlayer::Init()
 	// Create a OpenGL texture identifier
 	m_image_texture = (GLuint*) malloc(sizeof(GLuint));
 	glGenTextures(1, m_image_texture);
-	glBindTexture(GL_TEXTURE_2D, *m_image_texture);
+
+
+	LoadTextureFromFile("jeep/sprites/misc/cursor.png", &m_cursor_texture, NULL, NULL);
+
+	ma_result result;
+	result = ma_engine_init(NULL, &m_ma_engine);
+	if (result == MA_SUCCESS)
+	{
+		ma_engine_play_sound(&m_ma_engine, "jeep/media/bjork-all-is-full-of-love.mp3", NULL);
+	}
+	else
+	{
+		fprintf(stderr, "MINIAUDIO ERROR: %d", result);
+	}
 
 	m_image_width = 960;
 	m_image_height = 540;
@@ -130,39 +161,46 @@ void CImGuiVideoPlayer::Init()
 
 	m_reading_frame = false;
 	m_shutdown = false;
-	m_lastTime = 0;
 	m_decoder_thread = new std::thread(decode_mpeg, this);
-
-	ma_result result;
-
-	result = ma_engine_init(NULL, &m_ma_engine);
-	if (result == MA_SUCCESS)
-	{
-		ma_engine_play_sound(&m_ma_engine, "jeep/media/theme.mp3", NULL);
-	}
-	else
-	{
-		fprintf(stderr, "MINIAUDIO ERROR: %d", result);
-	}
 }
 
 void CImGuiVideoPlayer::Render()
 {
 	m_reading_frame = true;
-	SDL_PauseAudio(0);
 	
 	bool ret = LoadImageDataIntoTexture(m_image_data, m_image_width, m_image_height, m_image_texture);
-	
-	ImGui::Begin("Video Player");
-	ImGui::SetWindowSize(ImVec2(1000, 600));
-	ImGui::Image((void*)(intptr_t)*m_image_texture, ImVec2(m_image_width, m_image_height));
-	ImGui::End();
-	/*ImGui::Begin("Video Player", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-	ImGuiIO io = ImGui::GetIO();
-	ImGui::SetWindowSize(ImVec2(io.DisplaySize.x, io.DisplaySize.y));
-	ImGui::SetWindowPos(ImVec2(0,0));
-	ImGui::Image((void*)(intptr_t)*m_image_texture, ImVec2(io.DisplaySize.x, io.DisplaySize.y));
-	ImGui::End();*/
+
+	if (m_lastTimeAudio == gEngfuncs.GetClientTime() && !m_paused)
+	{
+		// Pause audio if client time isn't advancing
+		ma_engine_stop(&m_ma_engine);
+		m_paused = true;
+	}
+	else if (m_lastTimeAudio != gEngfuncs.GetClientTime() && m_paused)
+	{
+		ma_engine_start(&m_ma_engine);
+		m_paused = false;
+	}
+
+	if (!m_paused)
+	{
+		int mouse_x, mouse_y;
+		SDL_GetMouseState(&mouse_x, &mouse_y);
+
+		ImGui::Begin("Video Player");
+		ImGui::SetWindowSize(ImVec2(1000, 600));
+		ImGui::Image((void*)(intptr_t)*m_image_texture, ImVec2(m_image_width, m_image_height));
+		ImGui::GetForegroundDrawList()->AddImage((void*)(intptr_t) * (&m_cursor_texture), ImVec2(mouse_x, mouse_y), ImVec2(mouse_x + 16, mouse_y + 16));
+		ImGui::End();
+		/*ImGui::Begin("Video Player", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		ImGuiIO io = ImGui::GetIO();
+		ImGui::SetWindowSize(ImVec2(io.DisplaySize.x, io.DisplaySize.y));
+		ImGui::SetWindowPos(ImVec2(0,0));
+		ImGui::Image((void*)(intptr_t)*m_image_texture, ImVec2(io.DisplaySize.x, io.DisplaySize.y));
+		ImGui::End();*/
+	}
+
+	m_lastTimeAudio = gEngfuncs.GetClientTime();
 
 	m_reading_frame = false;
 }
@@ -198,5 +236,8 @@ void CImGuiVideoPlayer::Shutdown()
 	m_decoder_thread->join();
 	free(m_image_data);
 	m_image_data = nullptr;
+	ma_engine_stop(&m_ma_engine);
 	ma_engine_uninit(&m_ma_engine);
+	glDeleteTextures(1, m_image_texture);
+	glDeleteTextures(1, &m_cursor_texture);
 }

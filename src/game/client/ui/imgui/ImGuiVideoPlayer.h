@@ -23,15 +23,18 @@ public:
 
 	bool m_reading_frame;
 	bool m_shutdown;
-	float m_lastTime;
+	std::chrono::steady_clock::time_point m_lastTime;
+	float m_lastTimeAudio;
+	ma_engine m_ma_engine;
+	bool m_paused;
 
 private:
 	unsigned char* m_image_data;
 	GLuint *m_image_texture;
+	GLuint m_cursor_texture;
 	int m_image_width;
 	int m_image_height;
 	int m_image_depth;
 	std::vector<float> m_audio_samples;
 	std::thread *m_decoder_thread;
-	ma_engine m_ma_engine;
 };

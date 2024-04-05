@@ -90,6 +90,8 @@ void CImGuiMan::RenderImGui()
 
 	ImGui::Render();
 	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());
+
+	//SDL_SetWindowGrab(m_pWindow, SDL_FALSE);
 }
 
 SDL_Window* CImGuiMan::GetSdlWindow()
