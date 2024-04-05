@@ -23,7 +23,7 @@ public:
 	// TODO: should be private -- separate out to a context struct or something
 	bool m_reading_frame;
 	bool m_shutdown;
-	std::chrono::steady_clock::time_point m_lastTime;
+	std::chrono::high_resolution_clock::time_point m_lastTime;
 	float m_lastTimeAudio;
 	ma_engine m_ma_engine;
 	bool m_paused;
