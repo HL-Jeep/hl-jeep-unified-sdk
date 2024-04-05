@@ -5,6 +5,7 @@
 #include "SDL2/SDL.h"
 
 #include "cl_util.h"
+#include "Exports.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -105,6 +106,8 @@ void CImGuiMan::InitImgui()
 	// Set up console commands
 	g_ConCommands.CreateCVar("np_imgui_demo", "0", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
 	g_ConCommands.CreateCVar("np_video_player", "0", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
+	g_ConCommands.CreateCVar("np_video_fullscreen", "0", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
+	g_ConCommands.CreateCVar("np_video_width", "0.75", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
 	g_ConCommands.CreateCVar("np_mouse", "0", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
 	g_ConCommands.CreateCommand("np_load_video", &ImGuiLoadVideo, CommandLibraryPrefix::No);
 
@@ -134,11 +137,14 @@ void CImGuiMan::ShutdownImgui()
 	ImGui::DestroyContext();
 }
 
+bool need_restore_mouse;
 void CImGuiMan::RenderImGui()
 {
 	if (!m_pWindow)
 		return;
 
+	int screen_width, screen_height;
+	SDL_GetWindowSize(m_pWindow, &screen_width, &screen_height);
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL2_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
@@ -151,7 +157,7 @@ void CImGuiMan::RenderImGui()
 	{
 		g_ImGuiVideoPlayer.SetActivationState(g_ConCommands.GetCVar("np_video_player")->value == 1);
 		if (g_ConCommands.GetCVar("np_video_player")->value == 1)
-			g_ImGuiVideoPlayer.Render();
+			g_ImGuiVideoPlayer.Render(screen_width, screen_height);
 	}
 
 	if (g_ConCommands.GetCVar("np_mouse") && g_ConCommands.GetCVar("np_mouse")->value == 1)
@@ -159,6 +165,13 @@ void CImGuiMan::RenderImGui()
 		int mouse_x, mouse_y;
 		SDL_GetMouseState(&mouse_x, &mouse_y);
 		ImGui::GetForegroundDrawList()->AddImage((void*)(intptr_t) * (&m_cursor_texture), ImVec2(mouse_x, mouse_y), ImVec2(mouse_x + 16, mouse_y + 16));
+		need_restore_mouse = IsMouseInPointerEnabled();
+		IN_DeactivateMouse();
+	}
+	else if (need_restore_mouse)
+	{
+		IN_ActivateMouse();
+		need_restore_mouse = false;
 	}
 
 	ImGui::Render();

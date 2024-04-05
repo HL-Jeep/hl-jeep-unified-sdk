@@ -50,6 +50,7 @@ void decode_mpeg(CImGuiVideoPlayer* player)
 	plm_t* plm;
 	plm = plm_create_with_filename((player->m_path + ".mpeg").c_str());
 	plm_set_video_decode_callback(plm, video_decode_callback, player);
+	plm_set_audio_enabled(plm, false);
 
 	player->m_lastTime = std::chrono::high_resolution_clock::now();
 	while (!plm_has_ended(plm))
@@ -114,7 +115,7 @@ bool CImGuiVideoPlayer::LoadVideo(std::string path)
 {
 	this->m_path = "jeep/media/" + path;
 	std::string audio_path = m_path + ".mp3";
-	std::string video_path = m_path + ".mp3";
+	std::string video_path = m_path + ".mpeg";
 
 	if (!file_exists(video_path) || !file_exists(audio_path))
 		return false;
@@ -147,7 +148,7 @@ bool CImGuiVideoPlayer::LoadVideo(std::string path)
 
 	// Load the image just to get some stats
 	plm_t* plm;
-	plm = plm_create_with_filename((m_path + ".mpeg").c_str());
+	plm = plm_create_with_filename(video_path.c_str());
 
 	m_image_width = plm_get_width(plm);
 	m_image_height = plm_get_height(plm);
@@ -163,7 +164,7 @@ bool CImGuiVideoPlayer::LoadVideo(std::string path)
 	return true;
 }
 
-void CImGuiVideoPlayer::Render()
+void CImGuiVideoPlayer::Render(int screen_width, int screen_height)
 {
 	if (m_inactive)
 	{
@@ -173,6 +174,8 @@ void CImGuiVideoPlayer::Render()
 	}
 
 	m_reading_frame = true;
+
+	float image_ratio = (float) m_image_height / (float) m_image_width;
 	
 	bool ret = LoadImageDataIntoTexture(m_image_data, m_image_width, m_image_height, m_image_texture);
 
@@ -190,16 +193,23 @@ void CImGuiVideoPlayer::Render()
 
 	if (!m_paused)
 	{
-		ImGui::Begin("Video Player");
-		ImGui::SetWindowSize(ImVec2(1000, 1000));
-		ImGui::Image((void*)(intptr_t)*m_image_texture, ImVec2(m_image_width, m_image_height));
-		ImGui::End();
-		/*ImGui::Begin("Video Player", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
-		ImGuiIO io = ImGui::GetIO();
-		ImGui::SetWindowSize(ImVec2(io.DisplaySize.x, io.DisplaySize.y));
-		ImGui::SetWindowPos(ImVec2(0,0));
-		ImGui::Image((void*)(intptr_t)*m_image_texture, ImVec2(io.DisplaySize.x, io.DisplaySize.y));
-		ImGui::End();*/
+		if (g_ConCommands.GetCVar("np_video_fullscreen") && g_ConCommands.GetCVar("np_video_fullscreen")->value == 1)
+		{
+			ImGui::Begin(" ", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+			ImGuiIO io = ImGui::GetIO();
+			ImGui::SetWindowSize(ImVec2(screen_width, screen_height));
+			ImGui::SetWindowPos(ImVec2(0, 0));
+			ImGui::Image((void*)(intptr_t)*m_image_texture, ImVec2(screen_width, screen_height));
+			ImGui::End();
+		}
+		else if (g_ConCommands.GetCVar("np_video_fullscreen") && g_ConCommands.GetCVar("np_video_fullscreen")->value != 1)
+		{
+			ImGui::Begin(" ", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+			ImGui::SetNextWindowPos(ImVec2((screen_width / 2) - ((g_ConCommands.GetCVar("np_video_width")->value * screen_width)/2), (screen_height/2) - ((g_ConCommands.GetCVar("np_video_width")->value * screen_width * image_ratio)/2)));
+			ImGui::SetWindowSize(ImVec2((g_ConCommands.GetCVar("np_video_width")->value * screen_width) + 15, (g_ConCommands.GetCVar("np_video_width")->value * screen_width * image_ratio) + 35));
+			ImGui::Image((void*)(intptr_t)*m_image_texture, ImVec2(g_ConCommands.GetCVar("np_video_width")->value * screen_width, (g_ConCommands.GetCVar("np_video_width")->value * screen_width) * image_ratio));
+			ImGui::End();
+		}
 	}
 
 	m_lastTimeAudio = gEngfuncs.GetClientTime();
@@ -209,13 +219,13 @@ void CImGuiVideoPlayer::Render()
 
 void CImGuiVideoPlayer::SetActivationState(bool active)
 {
-	m_inactive = !active;
-	m_paused = !active;
-
-	if (active)
+	if (active && !m_paused)
 		ma_engine_start(&m_ma_engine);
 	else
 		ma_engine_stop(&m_ma_engine);
+
+	m_inactive = !active;
+	m_paused = !active;
 }
 
 unsigned char* CImGuiVideoPlayer::GetImageBufferPtr()

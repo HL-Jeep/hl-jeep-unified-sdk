@@ -13,7 +13,7 @@ class CImGuiVideoPlayer
 {
 public:
 	void Init();
-	void Render();
+	void Render(int screen_width, int screen_height);
 	void Shutdown();
 
 	unsigned char* GetImageBufferPtr();
