@@ -25,6 +25,61 @@ static int ImGuiEventFilter(void*, SDL_Event* event)
 	return static_cast<int>(ImGui_ImplSDL2_ProcessEvent(event));
 }
 
+static void ImGuiLoadVideo(const CommandArgs& args)
+{
+	if (args.Count() < 2)
+	{
+		Con_Printf("Usage: %s <video name>\n", args.Argument(0));
+		return;
+	}
+
+	const char* path = args.Argument(1);
+	bool success = g_ImGuiVideoPlayer.LoadVideo(path);
+
+	if (!success)
+	{
+		Con_Printf("Failed to load video: %s\n", path);
+		return;
+	}
+}
+
+// Simple helper function to load an image into a OpenGL texture with common settings
+bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height)
+{
+	// Load from file
+	int image_width = 0;
+	int image_height = 0;
+	unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
+	if (image_data == NULL)
+		return false;
+
+	// Create a OpenGL texture identifier
+	GLuint image_texture;
+	glGenTextures(1, &image_texture);
+	glBindTexture(GL_TEXTURE_2D, image_texture);
+
+	// Setup filtering parameters for display
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // This is required on WebGL for non power-of-two textures
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
+
+	// Upload pixels into texture
+#if defined(GL_UNPACK_ROW_LENGTH) && !defined(__EMSCRIPTEN__)
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+#endif
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
+	stbi_image_free(image_data);
+
+	*out_texture = image_texture;
+	if (out_width)
+		*out_width = image_width;
+	if (out_height)
+		*out_height = image_height;
+
+	return true;
+}
+
 void CImGuiMan::InitImgui()
 {
 	m_pWindow = GetSdlWindow();
@@ -49,6 +104,9 @@ void CImGuiMan::InitImgui()
 
 	// Set up console commands
 	g_ConCommands.CreateCVar("np_imgui_demo", "0", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
+	g_ConCommands.CreateCVar("np_video_player", "0", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
+	g_ConCommands.CreateCVar("np_mouse", "0", FCVAR_CLIENTDLL, CommandLibraryPrefix::No);
+	g_ConCommands.CreateCommand("np_load_video", &ImGuiLoadVideo, CommandLibraryPrefix::No);
 
 	// Setup Platform/Renderer backends
 	ImGui_ImplSDL2_InitForOpenGL(m_pWindow, nullptr);
@@ -59,6 +117,8 @@ void CImGuiMan::InitImgui()
 	// Set up other ImGui stuff
 	g_ImGuiVideoPlayer.Init();
 
+	LoadTextureFromFile("jeep/sprites/misc/cursor.png", &m_cursor_texture, NULL, NULL);
+
 	g_pModFuncs->m_pfnFrameRender2 = ImGuiRenderFunc;
 }
 
@@ -67,6 +127,7 @@ void CImGuiMan::ShutdownImgui()
 	SDL_DelEventWatch(ImGuiEventFilter, nullptr);
 
 	// Cleanup
+	glDeleteTextures(1, &m_cursor_texture);
 	g_ImGuiVideoPlayer.Shutdown();
 	ImGui_ImplOpenGL2_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
@@ -86,7 +147,19 @@ void CImGuiMan::RenderImGui()
 	if (g_ConCommands.GetCVar("np_imgui_demo") && g_ConCommands.GetCVar("np_imgui_demo")->value == 1)
 		ImGui::ShowDemoWindow();
 
-	g_ImGuiVideoPlayer.Render();
+	if (g_ConCommands.GetCVar("np_video_player"))
+	{
+		g_ImGuiVideoPlayer.SetActivationState(g_ConCommands.GetCVar("np_video_player")->value == 1);
+		if (g_ConCommands.GetCVar("np_video_player")->value == 1)
+			g_ImGuiVideoPlayer.Render();
+	}
+
+	if (g_ConCommands.GetCVar("np_mouse") && g_ConCommands.GetCVar("np_mouse")->value == 1)
+	{
+		int mouse_x, mouse_y;
+		SDL_GetMouseState(&mouse_x, &mouse_y);
+		ImGui::GetForegroundDrawList()->AddImage((void*)(intptr_t) * (&m_cursor_texture), ImVec2(mouse_x, mouse_y), ImVec2(mouse_x + 16, mouse_y + 16));
+	}
 
 	ImGui::Render();
 	ImGui_ImplOpenGL2_RenderDrawData(ImGui::GetDrawData());

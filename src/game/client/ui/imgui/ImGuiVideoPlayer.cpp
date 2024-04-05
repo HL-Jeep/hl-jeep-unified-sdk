@@ -17,7 +17,6 @@
 #include <thread>
 #include <chrono>
 
-// Simple helper function to load an image into a OpenGL texture with common settings
 bool LoadImageDataIntoTexture(unsigned char* image_data, int image_width, int image_height, GLuint* image_texture)
 {
 	glBindTexture(GL_TEXTURE_2D, *image_texture);
@@ -39,65 +38,18 @@ bool LoadImageDataIntoTexture(unsigned char* image_data, int image_width, int im
 	return true;
 }
 
-bool LoadTextureFromFile(const char* filename, GLuint* out_texture, int* out_width, int* out_height)
-{
-	// Load from file
-	int image_width = 0;
-	int image_height = 0;
-	unsigned char* image_data = stbi_load(filename, &image_width, &image_height, NULL, 4);
-	if (image_data == NULL)
-		return false;
-
-	// Create a OpenGL texture identifier
-	GLuint image_texture;
-	glGenTextures(1, &image_texture);
-	glBindTexture(GL_TEXTURE_2D, image_texture);
-
-	// Setup filtering parameters for display
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // This is required on WebGL for non power-of-two textures
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); // Same
-
-	// Upload pixels into texture
-#if defined(GL_UNPACK_ROW_LENGTH) && !defined(__EMSCRIPTEN__)
-	glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-#endif
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image_data);
-	stbi_image_free(image_data);
-
-	*out_texture = image_texture;
-	if (out_width)
-		*out_width = image_width;
-	if (out_height)
-		*out_height = image_height;
-
-	return true;
-}
-
 void video_decode_callback(plm_t* plm, plm_frame_t* frame, void* user)
 {
 	CImGuiVideoPlayer* player = (CImGuiVideoPlayer*)user;
 	// Do something with frame->y.data, frame->cr.data, frame->cb.data
-	plm_frame_to_rgba(frame, player->GetImageBufferPtr(), 960 * 4);
-}
-
-void audio_decode_callback(plm_t* plm, plm_samples_t* frame, void* user)
-{
-	CImGuiVideoPlayer* player = (CImGuiVideoPlayer*) user;
-	// Do something with samples->interleaved
-	for (size_t i = 0; i < frame->count; i++)
-	{
-		player->PushAudioSample(frame->interleaved[i]);
-	}
+	plm_frame_to_rgba(frame, player->GetImageBufferPtr(), player->m_image_width * player->m_image_depth);
 }
 
 void decode_mpeg(CImGuiVideoPlayer* player)
 {
 	plm_t* plm;
-	plm = plm_create_with_filename("jeep/media/bjork-all-is-full-of-love.mpeg");
+	plm = plm_create_with_filename((player->m_path + ".mpeg").c_str());
 	plm_set_video_decode_callback(plm, video_decode_callback, player);
-	// plm_set_audio_decode_callback(plm, audio_decode_callback, player); // unused
 
 	player->m_lastTime = std::chrono::high_resolution_clock::now();
 	while (!plm_has_ended(plm))
@@ -106,23 +58,21 @@ void decode_mpeg(CImGuiVideoPlayer* player)
 		{
 			// Wait for rendering to finish before overwriting the buffer
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			if (player->m_shutdown) break;
 		}
-
-		// Break out if we're trying to shut down
-		if (player->m_shutdown)
-		{
-			break;
-		}
+		if (player->m_shutdown) break;
 
 		// Decode
 		auto stop = std::chrono::high_resolution_clock::now();
 		auto time_passed = std::chrono::duration_cast<std::chrono::microseconds>(stop - player->m_lastTime);
 
 		// Check if we need to pause the video (and don't count it in the timer)
-		while (player->m_paused)
+		while (player->m_paused || player->m_inactive)
 		{
 			std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			if (player->m_shutdown) break;
 		}
+		if (player->m_shutdown) break;
 
 		player->m_lastTime = std::chrono::high_resolution_clock::now();
 		double time_passed_seconds = time_passed.count() / 1000000.0;
@@ -139,33 +89,89 @@ void CImGuiVideoPlayer::Init()
 	// Create a OpenGL texture identifier
 	m_image_texture = (GLuint*) malloc(sizeof(GLuint));
 	glGenTextures(1, m_image_texture);
+	m_path = "bjork-all-is-full-of-love";
+	
+	m_first_load = true;
+	LoadVideo(m_path);
 
+	m_inactive = true;
+}
 
-	LoadTextureFromFile("jeep/sprites/misc/cursor.png", &m_cursor_texture, NULL, NULL);
+inline bool file_exists(const std::string& name)
+{
+	if (FILE* file = fopen(name.c_str(), "r"))
+	{
+		fclose(file);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool CImGuiVideoPlayer::LoadVideo(std::string path)
+{
+	this->m_path = "jeep/media/" + path;
+	std::string audio_path = m_path + ".mp3";
+	std::string video_path = m_path + ".mp3";
+
+	if (!file_exists(video_path) || !file_exists(audio_path))
+		return false;
+
+	// We had a video loaded and it changed, shut down the old stuff
+	if (!m_first_load)
+	{
+		ma_engine_stop(&m_ma_engine);
+		m_shutdown = true;
+		m_decoder_thread->join();
+		delete (m_decoder_thread);
+		ma_engine_uninit(&m_ma_engine);
+		free(m_image_data);
+	}
+
+	m_shutdown = false;
+	m_first_load = false;
 
 	ma_result result;
 	result = ma_engine_init(NULL, &m_ma_engine);
 	if (result == MA_SUCCESS)
 	{
-		ma_engine_play_sound(&m_ma_engine, "jeep/media/bjork-all-is-full-of-love.mp3", NULL);
+		ma_engine_play_sound(&m_ma_engine, audio_path.c_str(), NULL);
+		ma_engine_stop(&m_ma_engine);
 	}
 	else
 	{
 		fprintf(stderr, "MINIAUDIO ERROR: %d", result);
 	}
 
-	m_image_width = 960;
-	m_image_height = 540;
+	// Load the image just to get some stats
+	plm_t* plm;
+	plm = plm_create_with_filename((m_path + ".mpeg").c_str());
+
+	m_image_width = plm_get_width(plm);
+	m_image_height = plm_get_height(plm);
 	m_image_depth = 4;
-	m_image_data = (unsigned char*) malloc(m_image_width * m_image_height * m_image_depth);
+	m_image_data = (unsigned char*)malloc(m_image_width * m_image_height * m_image_depth);
+
+	plm_destroy(plm);
 
 	m_reading_frame = false;
 	m_shutdown = false;
 	m_decoder_thread = new std::thread(decode_mpeg, this);
+
+	return true;
 }
 
 void CImGuiVideoPlayer::Render()
 {
+	if (m_inactive)
+	{
+		m_paused = true;
+		ma_engine_stop(&m_ma_engine);
+		return;
+	}
+
 	m_reading_frame = true;
 	
 	bool ret = LoadImageDataIntoTexture(m_image_data, m_image_width, m_image_height, m_image_texture);
@@ -184,13 +190,9 @@ void CImGuiVideoPlayer::Render()
 
 	if (!m_paused)
 	{
-		int mouse_x, mouse_y;
-		SDL_GetMouseState(&mouse_x, &mouse_y);
-
 		ImGui::Begin("Video Player");
-		ImGui::SetWindowSize(ImVec2(1000, 600));
+		ImGui::SetWindowSize(ImVec2(1000, 1000));
 		ImGui::Image((void*)(intptr_t)*m_image_texture, ImVec2(m_image_width, m_image_height));
-		ImGui::GetForegroundDrawList()->AddImage((void*)(intptr_t) * (&m_cursor_texture), ImVec2(mouse_x, mouse_y), ImVec2(mouse_x + 16, mouse_y + 16));
 		ImGui::End();
 		/*ImGui::Begin("Video Player", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		ImGuiIO io = ImGui::GetIO();
@@ -205,24 +207,15 @@ void CImGuiVideoPlayer::Render()
 	m_reading_frame = false;
 }
 
-void CImGuiVideoPlayer::PushAudioSample(float sample)
+void CImGuiVideoPlayer::SetActivationState(bool active)
 {
-	m_audio_samples.push_back(sample);
-}
+	m_inactive = !active;
+	m_paused = !active;
 
-float* CImGuiVideoPlayer::AudioSampleData()
-{
-	return m_audio_samples.data();
-}
-
-size_t CImGuiVideoPlayer::NumAudioSamples()
-{
-	return m_audio_samples.size();
-}
-
-void CImGuiVideoPlayer::ClearAudioSamples()
-{
-	m_audio_samples.clear();
+	if (active)
+		ma_engine_start(&m_ma_engine);
+	else
+		ma_engine_stop(&m_ma_engine);
 }
 
 unsigned char* CImGuiVideoPlayer::GetImageBufferPtr()
@@ -234,10 +227,10 @@ void CImGuiVideoPlayer::Shutdown()
 {
 	m_shutdown = true;
 	m_decoder_thread->join();
+	delete (m_decoder_thread);
 	free(m_image_data);
 	m_image_data = nullptr;
 	ma_engine_stop(&m_ma_engine);
 	ma_engine_uninit(&m_ma_engine);
 	glDeleteTextures(1, m_image_texture);
-	glDeleteTextures(1, &m_cursor_texture);
 }
