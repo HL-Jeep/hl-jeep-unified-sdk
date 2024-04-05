@@ -15,6 +15,7 @@
 CImGuiMan g_ImGuiMan;
 CImGuiVideoPlayer g_ImGuiVideoPlayer;
 extern modfuncs_s* g_pModFuncs;
+extern bool suppress_inputs;
 
 static void ImGuiRenderFunc()
 {
@@ -165,13 +166,15 @@ void CImGuiMan::RenderImGui()
 		int mouse_x, mouse_y;
 		SDL_GetMouseState(&mouse_x, &mouse_y);
 		ImGui::GetForegroundDrawList()->AddImage((void*)(intptr_t) * (&m_cursor_texture), ImVec2(mouse_x, mouse_y), ImVec2(mouse_x + 16, mouse_y + 16));
-		need_restore_mouse = IsMouseInPointerEnabled();
+		need_restore_mouse = true;
+		suppress_inputs = true;
 		IN_DeactivateMouse();
 	}
 	else if (need_restore_mouse)
 	{
 		IN_ActivateMouse();
 		need_restore_mouse = false;
+		suppress_inputs = false;
 	}
 
 	ImGui::Render();

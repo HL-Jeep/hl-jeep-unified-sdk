@@ -591,11 +591,17 @@ void CL_AdjustAngles(float frametime, Vector& viewangles)
  *	@details if active == 1 then we are 1) not playing back demos ( where our commands are ignored ) and
  *	2 ) we have finished signing on to server
  */
+bool suppress_inputs = false;
 void DLLEXPORT CL_CreateMove(float frametime, usercmd_t* cmd, int active)
 {
 	float spd;
 	Vector viewangles;
 	static Vector oldangles;
+
+	if (suppress_inputs)
+	{
+		return;
+	}
 
 	if (0 != active)
 	{
