@@ -39,6 +39,13 @@ void CBaseTrigger::InitTrigger()
 	{
 		pev->message = ALLOC_ESCAPED_STRING(STRING(pev->message));
 	}
+
+	if ((pev->spawnflags & SF_TRIGGER_STARTOFF) != 0)
+	{
+		// Start inactive; must be used to start triggering
+		pev->solid = SOLID_NOT;
+		SetOrigin(pev->origin);
+	}
 }
 
 bool CBaseTrigger::KeyValue(KeyValueData* pkvd)
@@ -118,4 +125,9 @@ void CBaseTrigger::ToggleUse(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_
 		pev->solid = SOLID_NOT;
 	}
 	SetOrigin(pev->origin);
+}
+
+void CBaseTrigger::Use(CBaseEntity* pActivator, CBaseEntity* pCaller, USE_TYPE useType, float value)
+{
+	CBaseTrigger::ToggleUse(pActivator, pCaller, useType, value);
 }
