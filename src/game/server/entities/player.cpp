@@ -2619,7 +2619,7 @@ void CBasePlayer::PostThink()
 			if (flFallDamage > 0)
 			{
 				// Disable taking fall damage
-				// TakeDamage(World, World, flFallDamage, DMG_FALL);
+				TakeDamage(World, World, flFallDamage, DMG_FALL);
 				pev->punchangle.x = 0;
 			}
 		}
