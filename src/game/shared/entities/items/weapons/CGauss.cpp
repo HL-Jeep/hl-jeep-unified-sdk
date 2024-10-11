@@ -222,7 +222,7 @@ void CGauss::SecondaryAttack()
 			m_pPlayer->m_flNextAmmoBurn = 1000;
 		}
 
-		int pitch = (gpGlobals->time - m_pPlayer->m_flStartCharge) * (150 / GetFullChargeTime()) + 100;
+		int pitch = (gpGlobals->time - m_pPlayer->m_flStartCharge + 0.25 /* Make Gauss "feel" just a little more snappy */) * (150 / GetFullChargeTime()) + 100;
 		if (pitch > 250)
 			pitch = 250;
 
