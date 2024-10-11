@@ -48,6 +48,28 @@ Schedule_t slBaFollow[] =
 			"Follow"},
 };
 
+//=========================================================
+// Take cover from enemy! Tries lateral cover before node
+// cover!
+//=========================================================
+Task_t tlBarneyTakeCoverFromEnemy[] = {
+		{TASK_SET_FAIL_SCHEDULE, (float)SCHED_ARM_WEAPON}, // Can't run, just shoot!
+		{TASK_FIND_COVER_FROM_ENEMY, (float)0},
+		{TASK_RUN_PATH, (float)0},
+		{TASK_WAIT_FOR_MOVEMENT, (float)0},
+		{TASK_REMEMBER, (float)bits_MEMORY_INCOVER},
+		{TASK_FACE_ENEMY, (float)0},
+};
+Schedule_t slBarneyTakeCoverFromEnemy[] = {
+	{
+		tlBarneyTakeCoverFromEnemy,
+		std::size(tlBarneyTakeCoverFromEnemy),
+		bits_COND_NEW_ENEMY,
+		0,
+		"BarneyTakeCoverFromEnemy"
+	},
+};
+
 Task_t tlBarneyEnemyDraw[] =
 	{
 		{TASK_STOP_MOVING, 0},
@@ -119,11 +141,12 @@ Schedule_t slIdleBaStand[] =
 };
 
 BEGIN_CUSTOM_SCHEDULES(CBarney)
-slBaFollow,
+	slBaFollow,
 	slBarneyEnemyDraw,
 	slBaFaceTarget,
-	slIdleBaStand
-	END_CUSTOM_SCHEDULES();
+	slIdleBaStand,
+	slBarneyTakeCoverFromEnemy
+END_CUSTOM_SCHEDULES();
 
 void CBarney::OnCreate()
 {
@@ -243,7 +266,7 @@ void CBarney::GuardFirePistol()
 	SetBlending(0, angDir.x);
 	pev->effects = EF_MUZZLEFLASH;
 
-	FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_2DEGREES, 1024, BULLET_MONSTER_9MM);
+	FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_1DEGREES, 1024, BULLET_MONSTER_9MM);
 
 	int pitchShift = RANDOM_LONG(0, 20);
 
@@ -304,6 +327,8 @@ void CBarney::Spawn()
 	m_MonsterState = MONSTERSTATE_NONE;
 
 	m_afCapability = bits_CAP_HEAR | bits_CAP_TURN_HEAD | bits_CAP_DOORS_GROUP;
+	m_lastFindCoverTime = gpGlobals->time;
+	m_lastFlinchTime = gpGlobals->time;
 
 	SetBodygroup(GuardBodyGroup::Weapons, NPCWeaponState::Holstered + m_iGuardBody);
 
@@ -492,6 +517,9 @@ const Schedule_t* CBarney::GetScheduleOfType(int Type)
 
 	switch (Type)
 	{
+	case SCHED_TAKE_COVER_FROM_ENEMY:
+		return &slBarneyTakeCoverFromEnemy[0];
+		break;
 	case SCHED_ARM_WEAPON:
 		if (m_hEnemy != nullptr)
 		{
@@ -563,9 +591,16 @@ const Schedule_t* CBarney::GetSchedule()
 			return CBaseMonster::GetSchedule();
 		}
 
-		// always act surprized with a new enemy
-		if (HasConditions(bits_COND_NEW_ENEMY) && HasConditions(bits_COND_LIGHT_DAMAGE))
+		// Flinch when new enemies damage us
+		if (HasConditions(bits_COND_NEW_ENEMY) && HasConditions(bits_COND_LIGHT_DAMAGE) && gpGlobals->time > m_lastFlinchTime + 6) {
+			m_lastFlinchTime = gpGlobals->time;
 			return GetScheduleOfType(SCHED_SMALL_FLINCH);
+		}
+		// Find cover if we're taking damage and it's been a few seconds since we last found cover
+		else if (HasConditions(bits_COND_LIGHT_DAMAGE) && gpGlobals->time > m_lastFindCoverTime + 3) {
+			m_lastFindCoverTime = gpGlobals->time;
+			return GetScheduleOfType(SCHED_TAKE_COVER_FROM_ENEMY);
+		}
 
 		// wait for one schedule to draw gun
 		if (GetBodygroup(GuardBodyGroup::Weapons) != NPCWeaponState::Drawn)
@@ -581,7 +616,13 @@ const Schedule_t* CBarney::GetSchedule()
 		if (HasConditions(bits_COND_LIGHT_DAMAGE | bits_COND_HEAVY_DAMAGE))
 		{
 			// flinch if hurt
-			return GetScheduleOfType(SCHED_SMALL_FLINCH);
+			if (gpGlobals->time > m_lastFlinchTime + 6) {
+				m_lastFlinchTime = gpGlobals->time;
+				return GetScheduleOfType(SCHED_SMALL_FLINCH);
+			} else {
+				m_lastFindCoverTime = gpGlobals->time;
+				return GetScheduleOfType(SCHED_TAKE_COVER_FROM_ENEMY);
+			}
 		}
 
 		if (m_hEnemy == nullptr && IsFollowing())
